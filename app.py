@@ -125,11 +125,21 @@ def upload_image(file):
         return None
     except: return None
 
+if not MONGO_URI:
+    print("WARNING: MONGO_URI is not set - set it in your environment (.env locally, "
+          "the host's dashboard in production). The app will start but every database "
+          "operation will fail until it's configured.")
+
 try:
     client = MongoClient(MONGO_URI, tls=True, tlsCAFile=certifi.where(), tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
     client.admin.command('ping')
-except:
-    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
+except Exception as e:
+    print(f"Primary MongoDB connection attempt failed, retrying with relaxed TLS options: {e}")
+    # Keep a short, explicit timeout here too - the previous attempt already proved the
+    # server isn't reachable, so a slow retry would just tie up a request thread until it
+    # exceeds the process manager's worker timeout (e.g. gunicorn's default 30s) and gets
+    # killed mid-request instead of failing fast with a clear error.
+    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True, serverSelectionTimeoutMS=5000)
 
 db = client["dimmahairshop"]
 products_collection = db["products"]
