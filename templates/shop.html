@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Shop All Hair · DIMMAHAIRSHOP</title>
+  <meta name="description" content="Shop the full DIMMAHAIRSHOP collection - raw hair, virgin donor hair, bundles, closures, frontals, ready to wear wigs and more.">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="preconnect" href="https://i.ibb.co">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  <style>
+    .shop-layout { display: flex; gap: 2.6rem; align-items: flex-start; }
+    .shop-sidebar { width: 268px; flex-shrink: 0; }
+    .filter-block { margin-bottom: 1.8rem; }
+    .filter-block h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 2px; color: var(--espresso); margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-soft); }
+    .filter-check { display: flex; align-items: center; gap: 9px; padding: 5px 0; font-size: 0.85rem; color: var(--stone); cursor: pointer; }
+    .filter-check input { accent-color: var(--gold); }
+    .filter-check:hover { color: var(--ink); }
+    .price-row { display: flex; gap: 8px; }
+    .price-row input { width: 100%; padding: 9px 10px; border: 1px solid var(--border-soft); border-radius: 4px; font-size: 0.85rem; background: var(--ivory); }
+    .filter-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 1.2rem; }
+    .filter-actions .btn { margin-bottom: 0; }
+    .mobile-filter-btn { display: none; }
+    @media (max-width: 900px) {
+      .shop-sidebar { position: fixed; left: 0; right: 0; bottom: -100%; max-height: 82vh; overflow-y: auto; background: var(--ivory); border-radius: 22px 22px 0 0; z-index: 2500; padding: 1.8rem 1.5rem calc(2rem + var(--safe-bottom)); box-shadow: 0 -10px 40px rgba(28,20,16,0.2); transition: bottom 0.4s var(--ease-lux); width: 100%; }
+      .shop-sidebar.open { bottom: 0; }
+      .mobile-filter-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1.5px solid var(--ink); border-radius: 40px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; margin: 0.5rem 0 1.5rem; background: none; cursor: pointer; color: var(--ink); }
+      .sidebar-close-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+      .sidebar-close-row i { font-size: 1.7rem; cursor: pointer; }
+    }
+  </style>
+</head>
+<body>
+
+{% set active_nav = 'shop' %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_mobile_cat_nav.html" %}
+{% include "_cart_drawer.html" %}
+
+<main>
+  <div class="page-header container">
+    <div class="breadcrumb"><a href="{{ url_for('home') }}">Home</a> / Shop All</div>
+    <h1>Shop All Hair</h1>
+    <p class="page-lead">Every texture, length and collection in one place - retail or wholesale.</p>
+    <div class="product-count">{{ total_products }} product{{ 's' if total_products != 1 else '' }}</div>
+  </div>
+
+  <div class="container">
+    <button class="mobile-filter-btn" id="openFilters"><i class="ri-filter-3-line"></i> Filters</button>
+
+    <div class="shop-layout">
+      <aside class="shop-sidebar" id="shopSidebar">
+        <div class="sidebar-close-row">
+          <strong style="font-family:var(--font-display);font-size:1.2rem;">Filters</strong>
+          <i class="ri-close-line" id="closeFilters"></i>
+        </div>
+        <form method="GET" action="{{ url_for('shop') }}">
+          <div class="filter-block">
+            <h3>Category</h3>
+            {% for cat in ALL_CATEGORIES %}
+            <label class="filter-check"><input type="checkbox" name="cat" value="{{ cat.label }}" {% if cat.label in selected_cats %}checked{% endif %}> {{ cat.label }}</label>
+            {% endfor %}
+          </div>
+          <div class="filter-block">
+            <h3>Texture</h3>
+            {% for t in TEXTURE_OPTIONS %}
+            <label class="filter-check"><input type="checkbox" name="texture" value="{{ t }}" {% if t in selected_textures %}checked{% endif %}> {{ t }}</label>
+            {% endfor %}
+          </div>
+          <div class="filter-block">
+            <h3>Length</h3>
+            {% for l in LENGTH_OPTIONS %}
+            <label class="filter-check"><input type="checkbox" name="length" value="{{ l }}" {% if l in selected_lengths %}checked{% endif %}> {{ l }}&Prime;</label>
+            {% endfor %}
+          </div>
+          <div class="filter-block">
+            <h3>Price (₦)</h3>
+            <div class="price-row">
+              <input type="number" name="min_price" placeholder="Min" min="0" value="{{ request.args.get('min_price', '') }}">
+              <input type="number" name="max_price" placeholder="Max" min="0" value="{{ request.args.get('max_price', '') }}">
+            </div>
+          </div>
+          <div class="filter-block">
+            <label class="filter-check"><input type="checkbox" name="in_stock" value="1" {% if request.args.get('in_stock') == '1' %}checked{% endif %}> In stock only</label>
+          </div>
+          <div class="filter-actions">
+            <button type="submit" class="btn btn-gold">Apply Filters</button>
+            <a href="{{ url_for('shop') }}" class="btn btn-outline">Clear All</a>
+          </div>
+        </form>
+      </aside>
+
+      <div class="shop-main" style="flex:1;min-width:0;">
+        {% if products %}
+        <div class="product-grid">
+          {% for product in products %}{% include "_product_card.html" %}{% endfor %}
+        </div>
+        {% include "_pagination.html" %}
+        {% else %}
+        <div class="empty-state">
+          <i class="ri-inbox-line"></i>
+          <p>No products match these filters. Try clearing a filter, or ask us directly on WhatsApp.</p>
+          <a href="{{ WHATSAPP_LINK }}" target="_blank" class="btn btn-gold" style="width:auto;display:inline-flex;margin-top:1.5rem;padding-left:28px;padding-right:28px;"><i class="ri-whatsapp-fill"></i> Ask on WhatsApp</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</main>
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+<script>
+  (function () {
+    var sidebar = document.getElementById('shopSidebar'), openBtn = document.getElementById('openFilters'),
+      closeBtn = document.getElementById('closeFilters'), overlay = document.getElementById('overlay');
+    if (openBtn) openBtn.addEventListener('click', function () { sidebar.classList.add('open'); overlay.classList.add('active'); });
+    if (closeBtn) closeBtn.addEventListener('click', function () { sidebar.classList.remove('open'); overlay.classList.remove('active'); });
+    if (overlay) overlay.addEventListener('click', function () { sidebar.classList.remove('open'); });
+  })();
+</script>
+</body>
+</html>

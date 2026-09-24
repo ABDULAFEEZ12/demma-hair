@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>DIMMAHAIRSHOP · Premium Human Hair, Wigs &amp; Bundles</title>
+  <meta name="description" content="Premium Hair. Beautifully Sourced. Made For You. Shop quality human hair, luxury wigs, bundles and donor hairs for personal use or business - retail and wholesale, nationwide delivery across Nigeria.">
+  <meta property="og:title" content="DIMMAHAIRSHOP · Premium Human Hair, Wigs & Bundles">
+  <meta property="og:description" content="Premium Hair. Beautifully Sourced. Made For You.">
+  <meta property="og:type" content="website">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="preconnect" href="https://i.ibb.co">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  <style>
+    .hero-split { margin-top: 68px; display: grid; grid-template-columns: 1.05fr 0.95fr; min-height: calc(100vh - 68px); background: var(--sand); position: relative; overflow: hidden; }
+    .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 2rem 6% 2rem 10%; position: relative; z-index: 2; }
+    .hero-eyebrow { font-size: 0.78rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: 1.2rem; }
+    .hero-left h1 { font-size: clamp(2.6rem, 5.5vw, 4.4rem); font-weight: 500; line-height: 1.12; color: var(--ink); margin-bottom: 1.3rem; }
+    .hero-left h1 em { font-style: italic; color: var(--gold); }
+    .hero-description { font-size: 1.05rem; line-height: 1.8; color: var(--espresso); max-width: 480px; margin-bottom: 2.2rem; }
+    .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; padding: 16px 34px; font-size: 0.8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border-radius: 4px; }
+    .hero-cta.primary { background: var(--ink); color: #fff; }
+    .hero-cta.primary:hover { background: var(--espresso); transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+    .hero-cta.secondary { border: 2px solid var(--ink); color: var(--ink); }
+    .hero-cta.secondary:hover { background: var(--ink); color: #fff; transform: translateY(-3px); }
+    .hero-right { position: relative; overflow: hidden; background: linear-gradient(160deg, var(--champagne), var(--sand)); }
+    .hero-right img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-badge { position: absolute; bottom: 2.5rem; right: 2rem; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); padding: 1rem 1.8rem; border-left: 3px solid var(--gold); box-shadow: var(--shadow-soft); border-radius: 4px; }
+    .hero-badge strong { font-family: var(--font-display); font-size: 1.05rem; display: block; }
+    .hero-badge span { font-size: 0.75rem; color: var(--stone); }
+    @media (max-width: 900px) { .hero-split { grid-template-columns: 1fr; min-height: auto; } .hero-left { order: 2; padding: 3rem 6%; text-align: center; } .hero-right { order: 1; height: 58vh; } .hero-ctas { justify-content: center; } }
+
+    .cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.3rem; }
+    .cat-card { position: relative; aspect-ratio: 3/3.6; border-radius: 10px; overflow: hidden; display: flex; align-items: flex-end; box-shadow: var(--shadow-soft); }
+    .cat-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-lux); }
+    .cat-card:hover img { transform: scale(1.08); }
+    .cat-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(28,20,16,0) 40%, rgba(28,20,16,0.75) 100%); }
+    .cat-card span { position: relative; z-index: 2; color: #fff; font-family: var(--font-display); font-size: 1.05rem; padding: 1rem; line-height: 1.25; }
+    @media (max-width: 1080px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 620px) { .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; } }
+
+    .why-strip { background: var(--espresso); color: var(--champagne); padding: 4.5rem 0; }
+    .why-strip .section-eyebrow { color: var(--gold-light); } .why-strip h2 { color: #fff; }
+    .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.2rem; margin-top: 2.5rem; }
+    .why-item { display: flex; gap: 1rem; align-items: flex-start; }
+    .why-item i { font-size: 1.6rem; color: var(--gold-light); margin-top: 2px; }
+    .why-item h4 { color: #fff; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.3px; }
+    .why-item p { color: var(--champagne); opacity: 0.8; font-size: 0.85rem; }
+    @media (max-width: 900px) { .why-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .why-grid { grid-template-columns: 1fr; } }
+
+    .promo-split { display: grid; grid-template-columns: 1fr 1fr; min-height: 480px; }
+    .promo-content { display: flex; flex-direction: column; justify-content: center; padding: 3.5rem 6%; }
+    .promo-content .section-eyebrow { text-align: left; }
+    .promo-content h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin-bottom: 1.1rem; }
+    .promo-content p { color: var(--stone); font-size: 1rem; line-height: 1.8; margin-bottom: 0.8rem; max-width: 480px; }
+    .promo-ctas { display: flex; gap: 0.9rem; margin-top: 1.4rem; flex-wrap: wrap; }
+    .promo-image { position: relative; overflow: hidden; background: var(--sand); }
+    .promo-image img { width: 100%; height: 100%; object-fit: cover; min-height: 320px; }
+    .promo-split.reverse { direction: rtl; } .promo-split.reverse > * { direction: ltr; }
+    @media (max-width: 900px) { .promo-split, .promo-split.reverse { grid-template-columns: 1fr; direction: ltr; } .promo-image { min-height: 300px; } }
+
+    .texture-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+    .texture-card { position: relative; border-radius: 10px; overflow: hidden; aspect-ratio: 4/5; box-shadow: var(--shadow-soft); }
+    .texture-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .texture-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(28,20,16,0) 45%, rgba(28,20,16,0.8) 100%); }
+    .texture-label { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 1.4rem; color: #fff; }
+    .texture-label strong { font-family: var(--font-display); font-size: 1.4rem; }
+    .texture-label span { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--champagne); margin-top: 4px; }
+    @media (max-width: 760px) { .texture-grid { grid-template-columns: 1fr; } }
+
+    .about-strip { background: var(--sand); }
+    .about-inner { max-width: 780px; margin: 0 auto; text-align: center; }
+    .about-inner .stat-line { font-family: var(--font-display); font-size: 1.5rem; color: var(--gold); margin-bottom: 1.2rem; }
+    .about-inner p { color: var(--espresso); font-size: 1.02rem; line-height: 1.9; margin-bottom: 1.1rem; }
+
+    .review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; }
+    .review-card { background: var(--ivory); border: 1px solid var(--border-soft); border-radius: 10px; padding: 1.8rem; }
+    .review-card .stars { color: var(--gold); margin-bottom: 0.8rem; font-size: 0.95rem; }
+    .review-card p { color: var(--espresso); font-size: 0.92rem; line-height: 1.7; margin-bottom: 1rem; }
+    .review-card strong { font-family: var(--font-display); font-size: 1rem; }
+    .review-empty { text-align: center; padding: 3rem 1.5rem; border: 1px dashed var(--border-soft); border-radius: 10px; }
+    .review-empty i { font-size: 2.4rem; color: var(--gold); margin-bottom: 1rem; display: block; }
+    @media (max-width: 900px) { .review-grid { grid-template-columns: 1fr; } }
+
+    .social-strip { background: var(--ink); color: #fff; text-align: center; }
+    .social-strip h2 { color: #fff; }
+    .social-strip .section-eyebrow { color: var(--gold-light); }
+    .social-handles { display: flex; justify-content: center; gap: 2rem; margin-top: 1.8rem; flex-wrap: wrap; }
+    .social-handle { display: flex; align-items: center; gap: 12px; padding: 14px 26px; border: 1px solid rgba(233,217,188,0.3); border-radius: 50px; }
+    .social-handle i { font-size: 1.5rem; color: var(--gold-light); }
+    .social-handle strong { display: block; font-size: 0.95rem; }
+    .social-handle span { font-size: 0.7rem; color: var(--champagne); opacity: 0.75; text-transform: uppercase; letter-spacing: 1px; }
+
+    .delivery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+    .delivery-card { background: var(--ivory); border: 1px solid var(--border-soft); border-radius: 10px; padding: 1.8rem; }
+    .delivery-card i { font-size: 1.6rem; color: var(--gold); margin-bottom: 0.8rem; display: block; }
+    .delivery-card h4 { font-family: var(--font-sans); font-weight: 600; margin-bottom: 0.5rem; }
+    .delivery-card p { color: var(--stone); font-size: 0.9rem; line-height: 1.75; }
+    @media (max-width: 760px) { .delivery-grid { grid-template-columns: 1fr; } }
+
+    .faq-list { max-width: 780px; margin: 0 auto; }
+    .faq-item { border-bottom: 1px solid var(--border-soft); }
+    .faq-item summary { padding: 1.3rem 0.2rem; cursor: pointer; font-family: var(--font-display); font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after { content: '+'; font-size: 1.4rem; color: var(--gold); }
+    .faq-item[open] summary::after { content: '−'; }
+    .faq-item p { padding: 0 0.2rem 1.3rem; color: var(--stone); font-size: 0.92rem; line-height: 1.8; }
+
+    .final-cta { background: linear-gradient(135deg, var(--espresso), var(--ink)); color: #fff; text-align: center; padding: 5.5rem 5%; }
+    .final-cta h2 { color: #fff; font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1rem; }
+    .final-cta p { color: var(--champagne); margin-bottom: 2rem; font-size: 1.05rem; }
+  </style>
+</head>
+<body>
+
+{% set active_nav = 'home' %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_mobile_cat_nav.html" %}
+{% include "_cart_drawer.html" %}
+
+<main>
+  <!-- HERO -->
+  <section class="hero-split">
+    <div class="hero-left">
+      <div class="hero-eyebrow fade-up">DIMMAHAIRSHOP</div>
+      <h1 class="fade-up">Premium Hair.<br>Beautifully <em>Sourced.</em><br>Made For You.</h1>
+      <p class="hero-description fade-up">Shop quality human hair, luxury wigs, bundles and donor hairs for personal use or business.</p>
+      <div class="hero-ctas fade-up">
+        <a href="{{ url_for('shop') }}" class="hero-cta primary">Shop Collection</a>
+        <a href="{{ url_for('wholesale') }}" class="hero-cta secondary">Shop Wholesale</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <img src="{{ category_images.get('ready-to-wear-wigs') or category_images.values()|list|first or 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=1200&auto=format' }}" alt="Premium DIMMAHAIRSHOP hair" loading="eager">
+      <div class="hero-badge fade-up"><strong>Retail &amp; Wholesale</strong><span>Nationwide delivery across Nigeria</span></div>
+    </div>
+  </section>
+
+  <!-- SHOP BY CATEGORY -->
+  <section class="container section-padding">
+    <div class="section-header fade-up"><div class="section-eyebrow">Shop By Category</div><h2>Find Your Texture</h2></div>
+    <div class="cat-grid">
+      {% for cat in ALL_CATEGORIES %}
+      <a href="{{ url_for(cat.endpoint) }}" class="cat-card fade-up">
+        <img src="{{ category_images.get(cat.slug) or 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&auto=format' }}" alt="{{ cat.label }}" loading="lazy">
+        <span>{{ cat.label }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FEATURED COLLECTION -->
+  <section class="container section-padding" style="padding-top:1rem;">
+    <div class="section-header fade-up"><div class="section-eyebrow">Handpicked</div><h2>Featured Hair</h2>
+      <p class="section-sub">Carefully sourced collections selected for quality, beauty and versatility.</p>
+    </div>
+    {% if featured %}
+    <div class="product-grid">
+      {% for product in featured %}{% include "_product_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><i class="ri-inbox-line"></i><p>New arrivals are on the way. Message us on WhatsApp for what's in stock today.</p></div>
+    {% endif %}
+    <div style="text-align:center;margin-top:2.5rem;">
+      <a href="{{ url_for('shop') }}" class="hero-cta secondary" style="display:inline-flex;">View Full Collection</a>
+    </div>
+  </section>
+
+  <!-- WHY DIMMAHAIRSHOP -->
+  <section class="why-strip">
+    <div class="container">
+      <div class="section-header fade-up"><div class="section-eyebrow">Why Choose Us</div><h2>Why DIMMAHAIRSHOP</h2></div>
+      <div class="why-grid">
+        <div class="why-item fade-up"><i class="ri-award-line"></i><div><h4>Quality Human Hair</h4><p>Carefully sourced, luxury-grade hair.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-search-eye-line"></i><div><h4>Carefully Sourced Products</h4><p>Every collection is vetted for quality.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-price-tag-3-line"></i><div><h4>Retail &amp; Wholesale Prices</h4><p>Fair pricing for individuals and businesses.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-drop-line"></i><div><h4>Wide Range of Textures &amp; Lengths</h4><p>From 8&Prime; to 32&Prime;, straight to curly.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-store-2-line"></i><div><h4>Personal Use &amp; Resale</h4><p>Perfect for individuals and vendors alike.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-truck-line"></i><div><h4>Nationwide Delivery</h4><p>We deliver across Nigeria.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-briefcase-4-line"></i><div><h4>Wholesale &amp; Bulk Orders</h4><p>Stock your business with ease.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-whatsapp-line"></i><div><h4>WhatsApp Customer Support</h4><p>Real answers, fast.</p></div></div>
+        <div class="why-item fade-up"><i class="ri-shield-check-line"></i><div><h4>Secure Online Shopping</h4><p>Safe checkout, every time.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHOLESALE -->
+  <section class="promo-split">
+    <div class="promo-content">
+      <div class="section-eyebrow fade-up">For Businesses</div>
+      <h2 class="fade-up">Looking for quality hair to stock your business?</h2>
+      <p class="fade-up">Shop our wholesale collections and source premium hairs at competitive prices.</p>
+      <p class="fade-up">Perfect for hair vendors, resellers, dropshippers, salons and bulk buyers.</p>
+      <div class="promo-ctas fade-up">
+        <a href="{{ url_for('wholesale') }}" class="hero-cta primary">Wholesale Enquiry</a>
+        <a href="{{ url_for('shop', wholesale='1') }}" class="hero-cta secondary">Shop Wholesale</a>
+      </div>
+    </div>
+    <div class="promo-image">
+      <img src="{{ category_images.get('bundles') or 'https://images.unsplash.com/photo-1522336572468-97b06e8ef143?w=900&auto=format' }}" alt="Wholesale hair sourcing">
+    </div>
+  </section>
+
+  <!-- READY TO WEAR -->
+  <section class="promo-split reverse">
+    <div class="promo-content">
+      <div class="section-eyebrow fade-up">Install &amp; Go</div>
+      <h2 class="fade-up">Ready To Wear Wigs</h2>
+      <p class="fade-up">Pre-styled, glueless-ready luxury wigs made for busy women who want beautiful hair without the wait.</p>
+      <div class="promo-ctas fade-up">
+        <a href="{{ url_for('ready-to-wear-wigs') }}" class="hero-cta primary">Shop Ready To Wear</a>
+      </div>
+    </div>
+    <div class="promo-image">
+      <img src="{{ category_images.get('ready-to-wear-wigs') or 'https://images.unsplash.com/photo-1595152772835-219674b2a8a6?w=900&auto=format' }}" alt="Ready to wear wigs">
+    </div>
+  </section>
+
+  <!-- TEXTURES -->
+  <section class="container section-padding">
+    <div class="section-header fade-up"><div class="section-eyebrow">Textures</div><h2>Straight. Wavy. Curly.</h2></div>
+    <div class="texture-grid">
+      <a href="{{ url_for('bone-straight') }}" class="texture-card fade-up"><img src="{{ category_images.get('bone-straight') or 'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=600&auto=format' }}" alt="Bone Straight"><div class="texture-label"><strong>Bone Straight</strong><span>Sleek &amp; Silky</span></div></a>
+      <a href="{{ url_for('wavy-hair') }}" class="texture-card fade-up"><img src="{{ category_images.get('wavy-hair') or 'https://images.unsplash.com/photo-1595475884562-073c30d45670?w=600&auto=format' }}" alt="Wavy"><div class="texture-label"><strong>Wavy</strong><span>Effortless Body</span></div></a>
+      <a href="{{ url_for('curly-hair') }}" class="texture-card fade-up"><img src="{{ category_images.get('curly-hair') or 'https://images.unsplash.com/photo-1554519515-242161756769?w=600&auto=format' }}" alt="Curly"><div class="texture-label"><strong>Curly</strong><span>Bold &amp; Defined</span></div></a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about-strip section-padding">
+    <div class="container about-inner">
+      <div class="section-eyebrow fade-up">Our Story</div>
+      <h2 class="fade-up">DIMMAHAIRSHOP</h2>
+      <p class="stat-line fade-up">Over 9 years of serving customers who value quality, beauty and good customer service.</p>
+      <p class="fade-up">DimmaHairShop has been in the hair business for over 9 years, serving customers who value quality, beauty and good customer service. We are passionate about helping women find the right hair for their style, lifestyle and budget.</p>
+      <p class="fade-up">Whether you are buying one wig for yourself or sourcing hair for your business, DimmaHairShop is here to make your shopping experience easy and reliable.</p>
+      <a href="{{ url_for('about') }}" class="hero-cta secondary fade-up" style="display:inline-flex;margin-top:1rem;">Read More</a>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="container section-padding">
+    <div class="section-header fade-up"><div class="section-eyebrow">Testimonials</div><h2>Customer Reviews</h2></div>
+    {% if reviews %}
+    <div class="review-grid">
+      {% for r in reviews %}
+      <div class="review-card fade-up">
+        <div class="stars">{% for i in range(r.rating|default(5)) %}★{% endfor %}</div>
+        <p>&ldquo;{{ r.text }}&rdquo;</p>
+        <strong>{{ r.name or 'Verified Customer' }}</strong>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="review-empty fade-up">
+      <i class="ri-chat-quote-line"></i>
+      <p style="color:var(--stone);max-width:460px;margin:0 auto 1rem;">We're just getting started collecting reviews here. Shopped with us before? We'd love to hear about it.</p>
+      <a href="{{ WHATSAPP_LINK }}" target="_blank" class="hero-cta secondary" style="display:inline-flex;">Share Your Experience</a>
+    </div>
+    {% endif %}
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="social-strip section-padding">
+    <div class="container">
+      <div class="section-eyebrow">Follow Along</div>
+      <h2>Join Us on Social</h2>
+      <div class="social-handles">
+        <a href="{{ INSTAGRAM_URL }}" target="_blank" class="social-handle"><i class="ri-instagram-line"></i><div><strong>{{ INSTAGRAM_HANDLE }}</strong><span>Instagram</span></div></a>
+        <a href="{{ TIKTOK_URL }}" target="_blank" class="social-handle"><i class="ri-tiktok-line"></i><div><strong>{{ TIKTOK_HANDLE }}</strong><span>TikTok</span></div></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DELIVERY -->
+  <section class="container section-padding">
+    <div class="section-header fade-up"><div class="section-eyebrow">Nationwide</div><h2>Delivery Information</h2></div>
+    <div class="delivery-grid">
+      <div class="delivery-card fade-up"><i class="ri-map-pin-line"></i><h4>Lagos Delivery</h4><p>Lagos customers can receive their orders through our local delivery service.</p></div>
+      <div class="delivery-card fade-up"><i class="ri-truck-line"></i><h4>Nationwide Delivery</h4><p>Orders outside Lagos are sent through reliable logistics companies. Delivery time depends on your location and order type.</p></div>
+      <div class="delivery-card fade-up"><i class="ri-store-2-line"></i><h4>Pickup</h4><p>Pickup is available from our Lagos location at {{ BUSINESS_ADDRESS }}</p></div>
+      <div class="delivery-card fade-up"><i class="ri-global-line"></i><h4>International</h4><p>International customers should contact us on WhatsApp for shipping arrangements.</p></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="container section-padding" id="faq">
+    <div class="section-header fade-up"><div class="section-eyebrow">Questions</div><h2>Frequently Asked</h2></div>
+    <div class="faq-list">
+      <details class="faq-item fade-up"><summary>Do you sell wholesale?</summary><p>Yes. We supply hair vendors, resellers, dropshippers, salons and bulk buyers. Visit our <a href="{{ url_for('wholesale') }}" style="text-decoration:underline;">Wholesale page</a> to get started.</p></details>
+      <details class="faq-item fade-up"><summary>Do you sell retail?</summary><p>Yes, we serve both individual retail customers and business/wholesale buyers.</p></details>
+      <details class="faq-item fade-up"><summary>Where are you located?</summary><p>{{ BUSINESS_ADDRESS }}</p></details>
+      <details class="faq-item fade-up"><summary>Do you deliver outside Lagos?</summary><p>Yes, we deliver nationwide across Nigeria through reliable logistics partners.</p></details>
+      <details class="faq-item fade-up"><summary>Do you ship internationally?</summary><p>For international shipping arrangements, please contact us on WhatsApp.</p></details>
+      <details class="faq-item fade-up"><summary>Can I pick up my order?</summary><p>Yes, pickup is available from our Lagos location.</p></details>
+      <details class="faq-item fade-up"><summary>How do I know if a product is available?</summary><p>Every product page shows live stock status. You can also message us on WhatsApp to confirm availability.</p></details>
+      <details class="faq-item fade-up"><summary>How do I order?</summary><p>Add your chosen hair to your bag and checkout online, or message us directly on WhatsApp.</p></details>
+      <details class="faq-item fade-up"><summary>What payment methods are available?</summary><p>We accept secure online payment by card, bank transfer and USSD at checkout.</p></details>
+      <details class="faq-item fade-up"><summary>How do I contact customer support?</summary><p>WhatsApp us on {{ WHATSAPP_NUMBER_DISPLAY }} - it's the fastest way to reach us.</p></details>
+      <details class="faq-item fade-up"><summary>Can I make bulk orders?</summary><p>Absolutely - bulk orders are welcome. Reach out via our Wholesale page or WhatsApp.</p></details>
+      <details class="faq-item fade-up"><summary>Can resellers and dropshippers buy from you?</summary><p>Yes, resellers and dropshippers are welcome. Let us know your business type in your wholesale enquiry.</p></details>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <h2>{{ BRAND_SLOGAN }}</h2>
+    <p>Shop premium wigs, bundles, donor hairs, closures and frontals - retail and wholesale, delivered nationwide.</p>
+    <a href="{{ url_for('shop') }}" class="hero-cta primary" style="background:var(--gold);">Shop Now</a>
+  </section>
+</main>
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+</body>
+</html>

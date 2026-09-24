@@ -1,0 +1,109 @@
+<div class="form-grid">
+  <div class="form-group"><label>Product Name *</label><input type="text" name="name" placeholder="e.g., 18&quot; Bone Straight Bundle" value="{{ product.name if product else '' }}" required></div>
+  <div class="form-group"><label>Price (₦) *</label><input type="number" name="price" placeholder="0" step="0.01" min="0" value="{{ product.price if product else '' }}" required></div>
+  <div class="form-group"><label>Sale Price (₦) <small>(optional)</small></label><input type="number" name="salePrice" placeholder="Leave blank if not on sale" step="0.01" min="0" value="{{ product.salePrice if product and product.salePrice else '' }}"></div>
+  <div class="form-group">
+    <label>Category *</label>
+    <select name="category" required>
+      <option value="">Select Category</option>
+      {% for label in CATEGORY_LABELS %}
+      <option value="{{ label }}" {% if product and product.category == label %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-group"><label>Stock * <small>(auto-fills from lengths below)</small></label><input type="number" name="stock" id="stockInput" placeholder="0" min="0" value="{{ product.stock if product else '' }}" required></div>
+
+  <div class="fieldset-title">Length &amp; Stock (leave all blank for products without length variants)</div>
+  <div class="form-group full-width">
+    <label>Available Lengths &amp; Quantity</label>
+    <div class="qty-grid">
+      {% for l in LENGTH_OPTIONS %}
+      <div class="qty-row">
+        <span class="qty-label">{{ l }}&Prime;</span>
+        <input type="number" name="length_qty_{{ l }}" min="0" placeholder="0" class="qty-input length-qty-input" value="{{ (product.lengthStock or {}).get(l, '') if product else '' }}">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="fieldset-title">Hair Details (only fill what applies to this product)</div>
+  <div class="form-group">
+    <label>Texture</label>
+    <select name="texture">
+      <option value="">Not applicable</option>
+      {% for t in TEXTURE_OPTIONS %}<option value="{{ t }}" {% if product and product.texture == t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Hair Type</label>
+    <select name="hairType">
+      <option value="">Not applicable</option>
+      {% for h in HAIR_TYPE_OPTIONS %}<option value="{{ h }}" {% if product and product.hairType == h %}selected{% endif %}>{{ h }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group"><label>Origin</label><input type="text" name="origin" placeholder="e.g. Vietnamese, Cambodian" value="{{ product.origin if product else '' }}"></div>
+  <div class="form-group"><label>Weight</label><input type="text" name="weight" placeholder="e.g. 100g per bundle" value="{{ product.weight if product else '' }}"></div>
+  <div class="form-group">
+    <label>Closure / Frontal Type</label>
+    <select name="closureType">
+      <option value="">Not applicable</option>
+      {% for c in CLOSURE_FRONTAL_TYPE_OPTIONS %}<option value="{{ c }}" {% if product and product.closureType == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Cap / Lace Type <small>(wigs)</small></label>
+    <select name="capType">
+      <option value="">Not applicable</option>
+      {% for c in CAP_LACE_TYPE_OPTIONS %}<option value="{{ c }}" {% if product and product.capType == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="form-group"><label>Bundle Info <small>(combos/bundles)</small></label><input type="text" name="bundleInfo" placeholder="e.g. 3 Bundles + Closure" value="{{ product.bundleInfo if product else '' }}"></div>
+
+  <div class="form-group">
+    <label>Hair Colors</label>
+    <select name="hair_color" multiple style="min-height: 110px;">
+      {% for c in HAIR_COLOR_OPTIONS %}<option {% if product and c in (product.hairColors or []) %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+    <small style="color:var(--stone-dark);font-size:0.65rem;">Hold Ctrl/Cmd to select multiple</small>
+  </div>
+  <div class="form-group"><label>Tags <small>(comma separated, for search)</small></label><input type="text" name="tags" placeholder="e.g. wig, straight, 613 blonde" value="{{ (product.tags or [])|join(', ') if product else '' }}"></div>
+
+  <div class="fieldset-title">Flags</div>
+  <div class="form-group">
+    <div class="checkbox-row"><input type="checkbox" name="featured" id="featured" {% if product and product.featured %}checked{% endif %}><label for="featured">Featured on homepage</label></div>
+    <div class="checkbox-row" style="margin-top:8px;"><input type="checkbox" name="newArrival" id="newArrival" {% if product and product.newArrival %}checked{% endif %}><label for="newArrival">New Arrival</label></div>
+    <div class="checkbox-row" style="margin-top:8px;"><input type="checkbox" name="wholesaleAvailable" id="wholesaleAvailable" {% if product and product.wholesaleAvailable %}checked{% endif %}><label for="wholesaleAvailable">Available for Wholesale</label></div>
+  </div>
+
+  <div class="form-group">
+    <label>Product Image {% if not product %}*{% endif %}</label>
+    <div class="file-input-wrapper">
+      <input type="file" name="image" accept="image/*" {% if not product %}required{% endif %}>
+      <div class="file-input-custom"><i class="ri-image-line"></i> Choose image...</div>
+    </div>
+    {% if product and product.image %}
+    <div style="margin-top:0.5rem;"><img src="{{ product.image }}" alt="{{ product.name }}" style="max-width:130px;border-radius:4px;"></div>
+    {% endif %}
+  </div>
+  <div class="form-group full-width"><label>Description</label><textarea name="description" placeholder="Product description...">{{ product.description if product else '' }}</textarea></div>
+</div>
+
+<script>
+  document.querySelectorAll('.file-input-wrapper input[type="file"]').forEach(function (input) {
+    input.addEventListener('change', function () {
+      const customDisplay = this.parentElement.querySelector('.file-input-custom');
+      if (this.files && this.files[0]) customDisplay.innerHTML = '<i class="ri-file-line"></i> ' + this.files[0].name;
+      else customDisplay.innerHTML = '<i class="ri-image-line"></i> Choose image...';
+    });
+  });
+  (function () {
+    const qtyInputs = document.querySelectorAll('.length-qty-input');
+    const stockInput = document.getElementById('stockInput');
+    function updateStock() {
+      let total = 0;
+      qtyInputs.forEach(function (inp) { const v = parseInt(inp.value, 10); if (!isNaN(v) && v > 0) total += v; });
+      if (total > 0) stockInput.value = total;
+    }
+    qtyInputs.forEach(function (inp) { inp.addEventListener('input', updateStock); });
+  })();
+</script>

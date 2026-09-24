@@ -1,0 +1,33 @@
+<aside id="side-menu">
+  <div class="sidebar-header">
+    <a href="{{ url_for('home') }}" class="brand-word">DIMMA<span>HAIRSHOP</span></a>
+    <i class="ri-close-line close-icon" id="closeSidebar"></i>
+  </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li><a href="{{ url_for('home') }}"><i class="ri-home-4-line"></i> Home</a></li>
+      <li><a href="{{ url_for('shop') }}"><i class="ri-store-line"></i> Shop All</a></li>
+      <li><a href="{{ url_for('wholesale') }}"><i class="ri-briefcase-4-line"></i> Wholesale</a></li>
+      <li><a href="{{ url_for('about') }}"><i class="ri-information-line"></i> About</a></li>
+      <li><a href="{{ url_for('contact') }}"><i class="ri-mail-line"></i> Contact</a></li>
+      <li><a href="{{ url_for('track_order') }}"><i class="ri-truck-line"></i> Track Order</a></li>
+    </ul>
+  </nav>
+  <div class="sidebar-categories">
+    <div class="sidebar-cat-label">Shop by Category</div>
+    <div class="sidebar-cat-chips">
+      {% for cat in ALL_CATEGORIES %}
+      <a href="{{ url_for(cat.endpoint) }}" class="cat-chip">{{ cat.label }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="{{ WHATSAPP_LINK }}" target="_blank"><i class="ri-whatsapp-line"></i> {{ WHATSAPP_NUMBER_DISPLAY }}</a>
+    <a href="{{ INSTAGRAM_URL }}" target="_blank"><i class="ri-instagram-line"></i> {{ INSTAGRAM_HANDLE }}</a>
+    <div class="sidebar-social">
+      <a href="{{ INSTAGRAM_URL }}" target="_blank" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+      <a href="{{ TIKTOK_URL }}" target="_blank" aria-label="TikTok"><i class="ri-tiktok-line"></i></a>
+      <a href="{{ WHATSAPP_LINK }}" target="_blank" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+    </div>
+  </div>
+</aside>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Messages · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="admin-container">
+{% set active_page = 'messages' %}
+{% include "_admin_header.html" %}
+
+  <div class="section">
+    <h2><i class="ri-message-line" style="margin-right: 10px;"></i> Messages</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Date</th><th>Name</th><th>Email</th><th>Subject</th><th>Message</th></tr></thead>
+        <tbody>
+          {% for msg in messages %}
+          <tr>
+            <td>{% if msg.createdAt %}{{ msg.createdAt.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</td>
+            <td><strong>{{ msg.name or '—' }}</strong></td>
+            <td>{{ msg.email or '—' }}</td>
+            <td>{{ msg.subject or '—' }}</td>
+            <td>{{ msg.message or '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" style="text-align:center;padding:3rem;color:var(--stone-dark);"><i class="ri-message-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No messages yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

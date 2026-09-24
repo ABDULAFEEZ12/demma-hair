@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>{{ product.name }} · DIMMAHAIRSHOP</title>
+  <meta name="description" content="{{ (product.description or product.name)|truncate(155) }}">
+  <meta property="og:title" content="{{ product.name }} · DIMMAHAIRSHOP">
+  <meta property="og:image" content="{{ product.image }}">
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="preconnect" href="https://i.ibb.co">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  <style>
+    .product-detail { padding: 116px 20px 60px; }
+    @media (max-width: 959px) { .product-detail { padding-top: 150px; } }
+    .product-detail-container { display: flex; flex-wrap: wrap; gap: 3rem; background: var(--ivory); border-radius: 16px; padding: 2.4rem; border: 1px solid var(--border-soft); box-shadow: var(--shadow-card); max-width: 1200px; margin: 0 auto; }
+    .product-gallery { flex: 1; min-width: 280px; }
+    .main-image-container { width: 100%; overflow: hidden; border-radius: 12px; border: 1px solid var(--border-soft); background: var(--sand); aspect-ratio: 3/4; }
+    .main-image { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s; }
+    .main-image-container:hover .main-image { transform: scale(1.08); }
+    .thumbnail-list { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+    .thumbnail { width: 68px; height: 68px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-soft); cursor: pointer; opacity: 0.7; }
+    .thumbnail:hover, .thumbnail.active-thumb { border-color: var(--gold); opacity: 1; }
+    .product-info { flex: 1; min-width: 280px; }
+    .product-category { font-size: 0.75rem; text-transform: uppercase; color: var(--stone); letter-spacing: 3px; margin-bottom: 10px; }
+    .product-title { font-size: 2.1rem; margin-bottom: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .product-price { font-size: 1.7rem; font-weight: 600; margin: 16px 0; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); padding: 14px 0; width: 100%; display: flex; align-items: baseline; gap: 12px; }
+    .product-price .old { font-size: 1.05rem; color: var(--stone-light); text-decoration: line-through; font-weight: 400; }
+    .variant-block { margin: 18px 0; }
+    .variant-label { font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px; color: var(--ink); margin-bottom: 8px; }
+    .variant-options { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .variant-chip { display: inline-block; padding: 8px 16px; border: 1.5px solid var(--border-soft); border-radius: 40px; font-size: 0.8rem; font-weight: 500; color: var(--espresso); background: #fff; cursor: pointer; text-align: center; position: relative; }
+    .variant-chip:hover:not(.sold-out) { border-color: var(--gold); }
+    .variant-chip.selected { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .variant-chip.sold-out { cursor: not-allowed; color: #bbb; background: #f7f7f7; border-color: #eee; text-decoration: line-through; }
+    .sold-out-label { display: block; font-size: 0.55rem; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; color: #A5443B; }
+    .variant-error { display: none; color: #A5443B; font-size: 0.8rem; margin-top: 6px; }
+    .variant-error.show { display: block; }
+    .multi-note { display: none; color: var(--stone); font-size: 0.75rem; margin-left: 10px; }
+    .multi-note.show { display: inline; }
+    .qty-selector.disabled-multi .qty-input { opacity: 0.4; pointer-events: none; }
+    .detail-table { margin: 20px 0; border: 1px solid var(--border-soft); border-radius: 10px; overflow: hidden; }
+    .detail-row { display: flex; justify-content: space-between; padding: 10px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border-softer); }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-row span:first-child { color: var(--stone); }
+    .detail-row span:last-child { color: var(--ink); font-weight: 500; text-align: right; }
+    .product-description { margin: 22px 0; color: var(--espresso); line-height: 1.8; }
+    .product-description h3 { margin-bottom: 10px; font-size: 1.3rem; }
+    .qty-selector { display: flex; align-items: center; gap: 18px; margin: 24px 0; }
+    .qty-selector label { font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; }
+    .qty-input { display: flex; align-items: center; gap: 10px; background: var(--sand); border-radius: 60px; padding: 5px 15px; border: 1px solid var(--border-soft); }
+    .qty-btn { background: transparent; border: none; color: var(--ink); font-size: 1.4rem; cursor: pointer; width: 30px; }
+    .qty-num { font-size: 1.05rem; min-width: 36px; text-align: center; font-weight: 500; }
+    .action-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .add-to-cart-btn-main { flex: 1; min-width: 180px; background: var(--ink); color: #fff; border: none; padding: 15px 26px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase; letter-spacing: 1.5px; }
+    .add-to-cart-btn-main:hover { background: var(--espresso); }
+    .add-to-cart-btn-main:disabled { background: #ccc; cursor: not-allowed; }
+    .wa-enquire-btn { flex: 1; min-width: 180px; background: #25D366; color: #fff; border: none; padding: 15px 26px; border-radius: 50px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase; letter-spacing: 1.5px; text-decoration: none; }
+    .wa-enquire-btn:hover { background: #1EBE5A; }
+    .stock-status { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; margin: -6px 0 18px; }
+    .stock-status.in-stock { color: #2e7d32; } .stock-status.low-stock { color: #B8892E; } .stock-status.out-of-stock { color: #A5443B; }
+    .trust-section { margin: 24px 0 10px; background: var(--sand); padding: 18px 22px; border-radius: 12px; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; }
+    .trust-item { display: flex; align-items: center; gap: 9px; font-size: 0.78rem; color: var(--espresso); }
+    .trust-item i { color: var(--gold); font-size: 1.1rem; }
+    .wholesale-note { margin: 16px 0; padding: 14px 18px; background: rgba(173,138,77,0.1); border: 1px solid rgba(173,138,77,0.3); border-radius: 10px; font-size: 0.82rem; color: var(--espresso); display: flex; align-items: center; gap: 10px; }
+    .wholesale-note a { text-decoration: underline; font-weight: 600; }
+    .back-link { display: inline-block; margin-top: 20px; color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 3px; font-weight: 500; font-size: 0.85rem; }
+    .related-section { margin: 3.5rem auto 0; max-width: 1200px; padding: 2.4rem 1.5rem; }
+    .related-header { text-align: center; margin-bottom: 2rem; }
+    .related-header h2 { font-size: 1.9rem; }
+    @media (max-width: 768px) { .product-detail-container { padding: 1.4rem; } .product-title { font-size: 1.6rem; } .product-price { font-size: 1.35rem; } }
+  </style>
+</head>
+<body>
+
+{% set active_nav = None %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_cart_drawer.html" %}
+
+<section class="product-detail">
+  <div class="product-detail-container">
+    <div class="product-gallery">
+      <div class="main-image-container"><img class="main-image" id="mainProductImage" src="{{ product.image }}" alt="{{ product.name }}"></div>
+      <div class="thumbnail-list" id="thumbnailList">
+        {% if product.images and product.images|length > 0 %}
+          {% for img in product.images %}<img class="thumbnail" src="{{ img }}" alt="Thumbnail" data-full="{{ img }}">{% endfor %}
+        {% else %}<img class="thumbnail active-thumb" src="{{ product.image }}" alt="Thumbnail" data-full="{{ product.image }}">{% endif %}
+      </div>
+    </div>
+    <div class="product-info">
+      {% if product.category %}<div class="product-category">{{ product.category }}</div>{% endif %}
+      <div class="product-title">{{ product.name }}
+        {% if product.newArrival %}<span class="product-tag new" style="position:static;">New</span>{% endif %}
+        {% if product.wholesaleAvailable %}<span class="product-tag wholesale" style="position:static;">Wholesale</span>{% endif %}
+      </div>
+      <div class="product-price">
+        {% if product.salePrice and product.salePrice > 0 and product.salePrice < product.price %}
+          <span>{{ format_currency(product.salePrice) }}</span><span class="old">{{ format_currency(product.price) }}</span>
+        {% else %}<span>{{ format_currency(product.price) }}</span>{% endif %}
+      </div>
+
+      {% if product.stock is defined %}
+        {% if product.stock <= 0 %}<div class="stock-status out-of-stock"><i class="ri-close-circle-line"></i> Out of Stock</div>
+        {% elif product.stock <= 5 %}<div class="stock-status low-stock"><i class="ri-alarm-warning-line"></i> Only {{ product.stock }} left in stock</div>
+        {% else %}<div class="stock-status in-stock"><i class="ri-checkbox-circle-line"></i> In Stock</div>{% endif %}
+      {% endif %}
+
+      {% if product.lengths and product.lengths|length > 0 %}
+      <div class="variant-block">
+        <div class="variant-label">Select Length (inches) *</div>
+        <div class="variant-options" id="lengthChips">
+          {% for length in product.lengths %}
+            {% set qty = (product.lengthStock or {}).get(length) %}
+            {% set sold_out = product.lengthStock and (qty is none or qty <= 0) %}
+            <button type="button" class="variant-chip length-chip{% if sold_out %} sold-out{% endif %}" data-length="{{ length }}" data-stock="{{ qty if qty is not none else '' }}" {% if sold_out %}disabled title="Sold out"{% endif %}>{{ length }}&Prime;{% if sold_out %}<span class="sold-out-label">Sold Out</span>{% endif %}</button>
+          {% endfor %}
+        </div>
+        <div id="lengthSelectError" class="variant-error">Please select a length.</div>
+      </div>
+      {% endif %}
+
+      {% if product.hairColors and product.hairColors|length > 0 %}
+      <div class="variant-block">
+        <div class="variant-label">Hair Color</div>
+        <div class="variant-options" id="colorChips">
+          {% for color in product.hairColors %}<button type="button" class="variant-chip color-chip" data-color="{{ color }}">{{ color }}</button>{% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% if product.texture or product.hairType or product.origin or product.weight or product.closureType or product.capType or product.bundleInfo %}
+      <div class="detail-table">
+        {% if product.texture %}<div class="detail-row"><span>Texture</span><span>{{ product.texture }}</span></div>{% endif %}
+        {% if product.hairType %}<div class="detail-row"><span>Hair Type</span><span>{{ product.hairType }}</span></div>{% endif %}
+        {% if product.origin %}<div class="detail-row"><span>Origin</span><span>{{ product.origin }}</span></div>{% endif %}
+        {% if product.weight %}<div class="detail-row"><span>Weight</span><span>{{ product.weight }}</span></div>{% endif %}
+        {% if product.closureType %}<div class="detail-row"><span>Closure / Frontal</span><span>{{ product.closureType }}</span></div>{% endif %}
+        {% if product.capType %}<div class="detail-row"><span>Cap / Lace</span><span>{{ product.capType }}</span></div>{% endif %}
+        {% if product.bundleInfo %}<div class="detail-row"><span>Bundle</span><span>{{ product.bundleInfo }}</span></div>{% endif %}
+      </div>
+      {% endif %}
+
+      <div class="product-description"><h3>Description</h3><p>{{ product.description or "Premium quality hair, carefully sourced by DIMMAHAIRSHOP." }}</p></div>
+
+      <div class="qty-selector" id="qtySelector">
+        <label>Quantity:</label>
+        <div class="qty-input"><button class="qty-btn" id="qtyMinus">−</button><span class="qty-num" id="qtyValue">1</span><button class="qty-btn" id="qtyPlus">+</button></div>
+        <small id="multiNote" class="multi-note">1 of each selected length will be added</small>
+      </div>
+
+      <div class="action-row">
+        <button class="add-to-cart-btn-main" id="mainAddToCart" {% if product.stock is defined and product.stock <= 0 %}disabled{% endif %}><i class="ri-shopping-bag-line"></i> {% if product.stock is defined and product.stock <= 0 %}Out of Stock{% else %}Add to Cart{% endif %}</button>
+        <a class="wa-enquire-btn" id="waEnquireBtn" href="#" target="_blank"><i class="ri-whatsapp-fill"></i> Ask About This Hair</a>
+      </div>
+
+      {% if product.wholesaleAvailable %}
+      <div class="wholesale-note"><i class="ri-briefcase-4-line"></i> Available for wholesale. <a href="{{ url_for('wholesale') }}">Send a wholesale enquiry &rarr;</a></div>
+      {% endif %}
+
+      <div class="trust-section">
+        <div class="trust-item"><i class="ri-checkbox-circle-fill"></i> Premium Quality</div>
+        <div class="trust-item"><i class="ri-truck-line"></i> Nationwide Delivery</div>
+        <div class="trust-item"><i class="ri-shield-check-line"></i> Secure Checkout</div>
+      </div>
+      <a href="{{ url_for('shop') }}" class="back-link"><i class="ri-arrow-left-line"></i> Back to shop</a>
+    </div>
+  </div>
+</section>
+
+{% if related_products and related_products|length > 0 %}
+<div class="related-section">
+  <div class="related-header"><div class="section-eyebrow">You May Also Like</div><h2>More From {{ product.category }}</h2></div>
+  <div class="product-grid">
+    {% for product in related_products %}{% include "_product_card.html" %}{% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+<script>
+(function () {
+  const productId = {{ product._id|tojson }};
+  const productName = {{ product.name|tojson }};
+  const productPrice = {{ (product.salePrice if (product.salePrice and product.salePrice > 0 and product.salePrice < product.price) else product.price)|tojson }};
+  const productStock = {{ (product.stock if product.stock is defined else 999999)|tojson }};
+  const productTexture = {{ (product.texture or '')|tojson }};
+  const productImage = {{ (product.image or '')|tojson }};
+  const hasLengths = {{ 'true' if product.lengths and product.lengths|length > 0 else 'false' }};
+
+  const selectedLengths = new Set();
+  const selectedColors = new Set();
+  const lengthStockMap = {};
+
+  const lengthChips = document.querySelectorAll('.length-chip:not(.sold-out)');
+  const lengthSelectError = document.getElementById('lengthSelectError');
+  const qtySelector = document.getElementById('qtySelector');
+  const multiNote = document.getElementById('multiNote');
+  let qty = 1;
+  const qtyValueSpan = document.getElementById('qtyValue');
+  const qtyMinus = document.getElementById('qtyMinus');
+  const qtyPlus = document.getElementById('qtyPlus');
+
+  function refreshQtyControls() {
+    if (selectedLengths.size > 1) {
+      qty = 1; qtyValueSpan.textContent = 1;
+      if (qtySelector) qtySelector.classList.add('disabled-multi');
+      if (multiNote) multiNote.classList.add('show');
+    } else {
+      if (qtySelector) qtySelector.classList.remove('disabled-multi');
+      if (multiNote) multiNote.classList.remove('show');
+      const max = selectedLengths.size === 1 ? lengthStockMap[[...selectedLengths][0]] : productStock;
+      qty = Math.min(qty, max) || 1;
+      qtyValueSpan.textContent = qty;
+    }
+  }
+
+  lengthChips.forEach(function (chip) {
+    const l = chip.dataset.length;
+    lengthStockMap[l] = chip.dataset.stock ? parseInt(chip.dataset.stock, 10) : productStock;
+    chip.addEventListener('click', function () {
+      if (selectedLengths.has(l)) { selectedLengths.delete(l); chip.classList.remove('selected'); }
+      else { selectedLengths.add(l); chip.classList.add('selected'); }
+      if (lengthSelectError) lengthSelectError.classList.remove('show');
+      refreshQtyControls();
+    });
+  });
+
+  document.querySelectorAll('.color-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      const c = chip.dataset.color;
+      if (selectedColors.has(c)) { selectedColors.delete(c); chip.classList.remove('selected'); }
+      else { selectedColors.add(c); chip.classList.add('selected'); }
+    });
+  });
+
+  if (qtyMinus && qtyPlus) {
+    qtyMinus.addEventListener('click', function () { if (selectedLengths.size > 1) return; if (qty > 1) { qty--; qtyValueSpan.textContent = qty; } });
+    qtyPlus.addEventListener('click', function () {
+      if (selectedLengths.size > 1) return;
+      const max = selectedLengths.size === 1 ? lengthStockMap[[...selectedLengths][0]] : productStock;
+      if (qty < max) { qty++; qtyValueSpan.textContent = qty; }
+      else { DimmaModal.show('error', 'Limited Stock', 'Only ' + max + ' left in stock - you can\'t add more than that.'); }
+    });
+  }
+
+  const addToCartBtn = document.getElementById('mainAddToCart');
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener('click', function () {
+      if (hasLengths && selectedLengths.size === 0) {
+        if (lengthSelectError) lengthSelectError.classList.add('show');
+        return;
+      }
+      const colorLabel = [...selectedColors].join(', ');
+      const lengthsToAdd = hasLengths ? [...selectedLengths] : [null];
+      const multi = lengthsToAdd.length > 1;
+      const added = [], blocked = [];
+
+      lengthsToAdd.forEach(function (length) {
+        const maxStock = length ? lengthStockMap[length] : productStock;
+        const perLenQty = multi ? 1 : qty;
+        const result = DimmaCart.addLine(productId, productName, productPrice, perLenQty, length, colorLabel, maxStock, productImage);
+        if (result.ok) added.push(length); else blocked.push(length);
+      });
+
+      let msg = '';
+      if (added.length > 0) {
+        const lenLabel = hasLengths ? added.map(function (l) { return l + '"'; }).join(', ') : '';
+        msg += productName + (lenLabel ? ' (' + lenLabel + ')' : '') + (colorLabel ? ', ' + colorLabel : '') + ' added to your bag.';
+      }
+      if (blocked.length > 0) {
+        msg += (msg ? '<br><br>' : '') + 'Could not add length' + (blocked.length > 1 ? 's' : '') + ' ' + blocked.join(', ') + ' - not enough stock available.';
+      }
+      DimmaModal.show(added.length > 0 ? 'success' : 'error', added.length > 0 ? 'Added to Bag' : 'Limited Stock', msg);
+      if (added.length > 0 && window.DimmaOpenCart) window.DimmaOpenCart();
+    });
+  }
+
+  const waBtn = document.getElementById('waEnquireBtn');
+  if (waBtn) {
+    waBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const lengthLabel = selectedLengths.size ? [...selectedLengths].map(function (l) { return l + '"'; }).join(', ') : '';
+      const parts = [productName];
+      if (lengthLabel) parts.push(lengthLabel);
+      if (productTexture) parts.push(productTexture);
+      const msg = encodeURIComponent('Hello {{ BRAND_NAME }}, I\'m interested in ' + parts.join(', ') + '. Please is it available?');
+      window.open('{{ WHATSAPP_LINK }}?text=' + msg, '_blank');
+    });
+  }
+
+  const mainImage = document.getElementById('mainProductImage');
+  const thumbnails = document.querySelectorAll('.thumbnail');
+  thumbnails.forEach(function (thumb) {
+    thumb.addEventListener('click', function () {
+      const fullSrc = this.getAttribute('data-full') || this.src;
+      if (mainImage && fullSrc) mainImage.src = fullSrc;
+      thumbnails.forEach(function (t) { t.classList.remove('active-thumb'); });
+      this.classList.add('active-thumb');
+    });
+  });
+  if (thumbnails.length === 1) thumbnails[0].classList.add('active-thumb');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>{% if search_query %}Search results for "{{ search_query }}"{% else %}Search{% endif %} · DIMMAHAIRSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+</head>
+<body>
+
+{% set active_nav = None %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_mobile_cat_nav.html" %}
+{% include "_cart_drawer.html" %}
+
+<main>
+  <div class="page-header container">
+    <div class="breadcrumb"><a href="{{ url_for('home') }}">Home</a> / Search</div>
+    <h1>{% if search_query %}Results for &ldquo;{{ search_query }}&rdquo;{% else %}Search{% endif %}</h1>
+    <div class="product-count">{{ total_products }} product{{ 's' if total_products != 1 else '' }}</div>
+  </div>
+  <div class="container">
+    {% if products %}
+    <div class="product-grid">
+      {% for product in products %}{% include "_product_card.html" %}{% endfor %}
+    </div>
+    {% include "_pagination.html" %}
+    {% else %}
+    <div class="empty-state">
+      <i class="ri-search-line"></i>
+      <p>{% if search_query %}No products found for &ldquo;{{ search_query }}&rdquo;. Try a different search, or ask us on WhatsApp.{% else %}Type something in the search bar above to find products - try a texture, length or category like "bone straight" or "30 inch".{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</main>
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+</body>
+</html>

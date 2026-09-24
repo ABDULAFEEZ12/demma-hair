@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="admin-container">
+{% set active_page = 'orders' %}
+{% include "_admin_header.html" %}
+
+  <div class="section">
+    <h2><i class="ri-shopping-bag-line" style="margin-right: 10px;"></i> Orders</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Reference</th><th>Items</th><th>Customer</th><th>Phone</th><th>WhatsApp</th><th>State</th><th>Country</th><th>Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td><code style="background:var(--ink-soft);padding:4px 8px;font-size:0.7rem;">{{ order.paymentReference or '—' }}</code></td>
+            <td>
+              {% if order.orderItems %}
+              <div class="order-item-thumbs" title="{% for item in order.orderItems %}{{ item.name }}{% if item.length %} ({{ item.length }}&quot;){% endif %}{% if item.color %} - {{ item.color }}{% endif %} x{{ item.quantity|default(1) }}{% if not loop.last %}, {% endif %}{% endfor %}">
+                {% for item in order.orderItems[:3] %}
+                  {% if item.image %}<a href="{{ item.image }}" target="_blank" title="Open full image"><img src="{{ item.image }}" alt="{{ item.name }}"></a>{% else %}<div class="thumb-more"><i class="ri-image-line"></i></div>{% endif %}
+                {% endfor %}
+                {% if order.orderItems|length > 3 %}<div class="thumb-more">+{{ order.orderItems|length - 3 }}</div>{% endif %}
+              </div>
+              {% else %}<span style="color:var(--stone-dark);">—</span>{% endif %}
+            </td>
+            <td><strong>{{ order.customerName or '—' }}</strong>{% if order.customerEmail %}<br><small style="color:var(--stone-dark);">{{ order.customerEmail }}</small>{% endif %}</td>
+            <td>{{ order.customerPhone or '—' }}</td>
+            <td>{{ order.customerWhatsapp or '—' }}</td>
+            <td>{{ order.state or '—' }}</td>
+            <td>{{ order.country or '—' }}</td>
+            <td><strong>{{ format_currency(order.amount|default(0)) }}</strong></td>
+            <td><span class="status-badge {{ order.status|lower if order.status else 'pending' }}">{{ order.status or 'Pending' }}</span></td>
+            <td>{% if order.createdAt %}{{ order.createdAt.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</td>
+            <td>
+              <div class="order-update-form">
+                <form method="POST" action="{{ url_for('update_order', reference=order.paymentReference) }}" style="display:flex;gap:6px;align-items:center;">
+                  <select name="status" style="width:auto;padding:8px 12px;font-size:0.7rem;">
+                    <option value="Pending" {% if order.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="Paid" {% if order.status == 'Paid' %}selected{% endif %}>Paid</option>
+                    <option value="Shipped" {% if order.status == 'Shipped' %}selected{% endif %}>Shipped</option>
+                    <option value="Delivered" {% if order.status == 'Delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="Cancelled" {% if order.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                  </select>
+                  <button type="submit" class="btn btn-small">Update</button>
+                </form>
+                <a href="#" class="btn-danger-sm" onclick="if(confirm('Delete this order permanently?')){window.location.href='{{ url_for('delete_order', reference=order.paymentReference) }}';}return false;" title="Delete Order">
+                  <i class="ri-delete-bin-line"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          <tr style="background:rgba(0,0,0,0.15);">
+            <td colspan="11" style="padding:0.5rem 1rem;font-size:0.75rem;color:var(--stone);">
+              <details>
+                <summary class="view-details-summary">View Full Order Details</summary>
+                <div class="order-detail-grid">
+                  <div><strong>Items:</strong>{% if order.orderItems %}<ul>{% for item in order.orderItems %}<li style="display:flex;align-items:center;gap:8px;padding:4px 0;">{% if item.image %}<a href="{{ item.image }}" target="_blank"><img src="{{ item.image }}" alt="{{ item.name }}" style="width:36px;height:36px;object-fit:cover;border-radius:4px;border:1px solid var(--border-light);"></a>{% endif %}<span>{{ item.name }}{% if item.length %} <strong>{{ item.length }}&quot;</strong>{% endif %}{% if item.color %} <strong>{{ item.color }}</strong>{% endif %} (×{{ item.quantity|default(1) }})</span></li>{% endfor %}</ul>{% else %}<p>No items listed</p>{% endif %}</div>
+                  <div><strong>Address:</strong><p>{{ order.deliveryAddress or 'Not provided' }}</p>{% if order.orderNotes %}<strong>Notes:</strong><p>{{ order.orderNotes }}</p>{% endif %}</div>
+                </div>
+              </details>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="11" style="text-align:center;padding:3rem;color:var(--stone-dark);"><i class="ri-shopping-bag-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No orders yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

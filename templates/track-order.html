@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>Track Your Order · DIMMAHAIRSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  <style>
+    .track-wrap { padding: 116px 5% 4rem; max-width: 760px; margin: 0 auto; }
+    @media (max-width: 959px) { .track-wrap { padding-top: 150px; } }
+    .track-form { display: flex; gap: 10px; margin: 1.6rem 0 2.4rem; flex-wrap: wrap; }
+    .track-form input { flex: 1; min-width: 220px; padding: 14px 18px; border: 1px solid var(--border-soft); border-radius: 40px; background: var(--sand); font-size: 0.9rem; }
+    .track-form button { padding: 14px 30px; }
+    .order-card { background: var(--ivory); border: 1px solid var(--border-soft); border-radius: 14px; padding: 1.6rem; margin-bottom: 1.2rem; box-shadow: var(--shadow-soft); }
+    .order-card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+    .order-ref-tag { font-family: monospace; background: var(--sand); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+    .status-pill { padding: 6px 16px; border-radius: 20px; font-size: 0.72rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .status-pending { background: rgba(212,175,55,0.15); color: #B8892E; } .status-paid { background: rgba(76,175,80,0.15); color: #4CAF50; }
+    .status-shipped { background: rgba(33,150,243,0.15); color: #2196F3; } .status-delivered { background: rgba(76,175,80,0.2); color: #2e7d32; }
+    .order-items-list { font-size: 0.85rem; color: var(--espresso); margin: 10px 0; }
+    .order-items-list li { padding: 3px 0; }
+    .order-total { font-weight: 700; margin-top: 8px; }
+    .empty-track { text-align: center; padding: 3rem 1rem; color: var(--stone); }
+    .empty-track i { font-size: 2.6rem; color: var(--gold); margin-bottom: 1rem; display: block; }
+  </style>
+</head>
+<body>
+
+{% set active_nav = None %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_cart_drawer.html" %}
+
+<main class="track-wrap">
+  <div class="page-header" style="padding-top:0;">
+    <div class="breadcrumb"><a href="{{ url_for('home') }}">Home</a> / Track Order</div>
+    <h1>Track Your Order</h1>
+    <p class="page-lead">Enter the phone number, WhatsApp number or email you used at checkout.</p>
+  </div>
+
+  <form class="track-form" method="POST" action="{{ url_for('track_order') }}">
+    <input type="text" name="lookup" placeholder="Phone, WhatsApp number or email" required>
+    <button type="submit" class="btn btn-gold" style="width:auto;">Track Order</button>
+  </form>
+
+  {% if searched %}
+    {% if orders %}
+      {% for order in orders %}
+      <div class="order-card">
+        <div class="order-card-top">
+          <span class="order-ref-tag">#{{ order.paymentReference }}</span>
+          <span class="status-pill status-{{ (order.status or 'pending')|lower }}">{{ order.status or 'Pending' }}</span>
+        </div>
+        <div style="font-size:0.85rem;color:var(--stone);">{{ order.createdAt.strftime('%d %b %Y, %H:%M') if order.createdAt else '' }}</div>
+        <ul class="order-items-list">
+          {% for item in order.orderItems %}
+          <li>{{ item.name }}{% if item.length %} ({{ item.length }}&Prime;){% endif %}{% if item.color %} - {{ item.color }}{% endif %} &times;{{ item.quantity|default(1) }}</li>
+          {% endfor %}
+        </ul>
+        <div class="order-total">Total: {{ format_currency(order.amount|default(0)) }}</div>
+        <a href="{{ url_for('order_status', reference=order.paymentReference) }}" class="back-link" style="font-size:0.85rem;">View full details &rarr;</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-track">
+        <i class="ri-search-line"></i>
+        <p>No orders found for that phone, WhatsApp number or email.<br>If you believe this is a mistake, message us on WhatsApp with your order reference.</p>
+        <a href="{{ WHATSAPP_LINK }}" target="_blank" class="btn btn-wa" style="width:auto;display:inline-flex;margin-top:1.2rem;padding-left:26px;padding-right:26px;"><i class="ri-whatsapp-fill"></i> WhatsApp Support</a>
+      </div>
+    {% endif %}
+  {% endif %}
+</main>
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+</body>
+</html>

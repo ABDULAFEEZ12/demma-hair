@@ -1,0 +1,19 @@
+<header id="top-bar">
+  <div class="top-bar-left">
+    <button id="menu-toggle" aria-label="Menu">☰</button>
+    <a href="{{ url_for('home') }}" class="brand-word">DIMMA<span>HAIRSHOP</span></a>
+  </div>
+  <nav class="desktop-nav">
+    <a href="{{ url_for('shop') }}" class="{{ 'active' if active_nav == 'shop' }}">Shop</a>
+    <a href="{{ url_for('raw-hair') }}" class="{{ 'active' if active_nav == 'raw-hair' }}">Raw Hair</a>
+    <a href="{{ url_for('ready-to-wear-wigs') }}" class="{{ 'active' if active_nav == 'ready-to-wear-wigs' }}">Wigs</a>
+    <a href="{{ url_for('bundles') }}" class="{{ 'active' if active_nav == 'bundles' }}">Bundles</a>
+    <a href="{{ url_for('closures_frontals') }}" class="{{ 'active' if active_nav == 'closures-frontals' }}">Closures &amp; Frontals</a>
+    <a href="{{ url_for('wholesale') }}" class="{{ 'active' if active_nav == 'wholesale' }}">Wholesale</a>
+    <a href="{{ url_for('about') }}" class="{{ 'active' if active_nav == 'about' }}">About</a>
+  </nav>
+  <div class="header-actions">
+    {% include "_search_bar.html" %}
+    <div class="cart-icon" id="cartIcon"><i class="ri-shopping-bag-line"></i><span id="cart-count">0</span></div>
+  </div>
+</header>

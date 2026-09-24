@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>Order Confirmed · DIMMAHAIRSHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+<style>
+  body { display: flex; align-items: center; justify-content: center; padding: 20px; min-height: 100vh; text-align: center; }
+  .confirmed-box { background: var(--ivory); border-radius: 20px; padding: 3.2rem 2.4rem; max-width: 540px; width: 100%; border: 1px solid var(--border-soft); box-shadow: var(--shadow-card); }
+  .check-icon { font-size: 4.5rem; margin-bottom: 1rem; }
+  h1 { font-size: 2rem; margin-bottom: 8px; }
+  h2 { font-size: 1.1rem; font-weight: 400; color: var(--stone); margin-bottom: 26px; }
+  .ref-code { background: var(--sand); border: 1px solid var(--border-soft); padding: 12px 24px; border-radius: 40px; display: inline-block; font-size: 1.1rem; letter-spacing: 2px; margin: 12px 0; font-weight: 700; }
+  .order-details { text-align: left; margin: 18px 0; padding: 18px; background: var(--sand); border-radius: 14px; font-size: 0.88rem; color: var(--espresso); display: none; }
+  .order-details p { margin: 6px 0; }
+  .order-details strong { color: var(--ink); }
+  .info-box { background: rgba(76,175,80,0.1); border: 1px solid #4CAF50; padding: 14px 18px; border-radius: 12px; margin-top: 18px; font-size: 0.85rem; color: #2E7D32; text-align: left; }
+  .info-box.fail { background: rgba(165,68,59,0.08); border-color: #A5443B; color: #A5443B; }
+  .back-link { display: inline-block; margin-top: 22px; color: var(--ink); font-size: 0.85rem; text-decoration: none; padding: 12px 28px; border: 2px solid var(--ink); border-radius: 40px; margin-right: 10px; }
+  .back-link.wa { border-color: #25D366; color: #25D366; }
+</style>
+</head>
+<body>
+
+<div class="confirmed-box">
+  <div class="check-icon" id="statusIcon">⏳</div>
+  <h1 id="statusTitle">Verifying Payment...</h1>
+  <h2 id="statusSubtitle">Please wait a moment</h2>
+
+  <p style="color: var(--stone);">Your Order Reference:</p>
+  <div class="ref-code" id="orderRef">Processing...</div>
+
+  <div class="order-details" id="orderDetails">
+    <p><strong>Name:</strong> <span id="detailName"></span></p>
+    <p><strong>Phone:</strong> <span id="detailPhone"></span></p>
+    <p><strong>Items:</strong> <span id="detailItems"></span></p>
+    <p><strong>Total Paid:</strong> <span id="detailTotal"></span></p>
+  </div>
+
+  <div class="info-box" id="infoBox" style="display:none;">
+    <i class="ri-check-double-line"></i>
+    <strong>Your order has been received!</strong><br>
+    We'll process it shortly and reach out with delivery details. No further action is needed from you.
+  </div>
+
+  <br>
+  <a href="{{ url_for('home') }}" class="back-link">← Continue Shopping</a>
+  <a href="{{ WHATSAPP_LINK }}" target="_blank" class="back-link wa"><i class="ri-whatsapp-fill"></i> WhatsApp Support</a>
+</div>
+
+<script>
+  const orderData = JSON.parse(localStorage.getItem("dimmaLastOrder") || "{}");
+
+  function showFailure(message) {
+    document.getElementById("statusIcon").innerText = "⚠️";
+    document.getElementById("statusTitle").innerText = "Payment Not Confirmed";
+    document.getElementById("statusSubtitle").innerText = message || "We couldn't confirm this payment.";
+    const box = document.getElementById("infoBox");
+    box.style.display = "block";
+    box.classList.add("fail");
+    box.innerHTML = '<i class="ri-error-warning-line"></i> <strong>No order was recorded.</strong><br>If you were charged, please contact us on WhatsApp with your reference above and we will resolve it. Otherwise, your bag is still saved - you can try checking out again.';
+  }
+
+  function showSuccess() {
+    document.getElementById("statusIcon").innerText = "✅";
+    document.getElementById("statusTitle").innerText = "Payment Successful!";
+    document.getElementById("statusSubtitle").innerText = "Thank you for your order";
+    document.getElementById("infoBox").style.display = "block";
+    localStorage.removeItem("dimmaCart");
+    localStorage.removeItem("dimmaLastOrder");
+  }
+
+  if (orderData.reference) {
+    document.getElementById("orderRef").innerText = orderData.reference;
+    document.getElementById("orderDetails").style.display = "block";
+    document.getElementById("detailName").innerText = orderData.name || 'N/A';
+    document.getElementById("detailPhone").innerText = orderData.phone || 'N/A';
+    const itemsSummary = (orderData.cart || []).map(function (i) {
+      return i.name + (i.length ? ' (' + i.length + '")' : '') + (i.color ? ', ' + i.color : '') + ' ×' + (i.quantity || 1);
+    }).join(', ');
+    document.getElementById("detailItems").innerText = itemsSummary || 'N/A';
+    document.getElementById("detailTotal").innerText = '₦' + (orderData.total || 0).toLocaleString();
+
+    fetch('/save-order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        reference: orderData.reference, customerName: orderData.name, customerPhone: orderData.phone,
+        customerWhatsapp: orderData.whatsapp || '', customerEmail: orderData.email || '',
+        deliveryAddress: orderData.address, state: orderData.state || '', country: orderData.country || '',
+        orderNotes: orderData.orderNotes || '', items: orderData.cart || [], totalAmount: orderData.total,
+        paymentMethod: "SquadCo"
+      })
+    }).then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (r) { if (r.ok) showSuccess(); else showFailure(r.data.message); })
+      .catch(function () { showFailure("Could not reach the server to confirm payment."); });
+  } else {
+    document.getElementById("orderRef").innerText = "Order Confirmed";
+    showFailure("No order details found for this session.");
+  }
+</script>
+</body>
+</html>

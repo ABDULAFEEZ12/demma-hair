@@ -1,0 +1,7 @@
+<nav class="bottom-nav">
+  <a href="{{ url_for('home') }}" class="bottom-nav-item {{ 'active' if active_nav == 'home' }}"><i class="ri-home-4-line"></i><span>Home</span></a>
+  <a href="{{ url_for('shop') }}" class="bottom-nav-item {{ 'active' if active_nav == 'shop' }}"><i class="ri-store-line"></i><span>Shop</span></a>
+  <div class="bottom-nav-item" id="bottomCartToggle"><i class="ri-shopping-bag-line"></i><span>Cart</span></div>
+  <a href="{{ WHATSAPP_LINK }}" target="_blank" class="bottom-nav-item"><i class="ri-whatsapp-line"></i><span>WhatsApp</span></a>
+  <div class="bottom-nav-item" id="bottomMenuToggle"><i class="ri-menu-line"></i><span>Menu</span></div>
+</nav>

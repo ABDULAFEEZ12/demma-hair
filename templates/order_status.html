@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Status · DIMMAHAIRSHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+<style>
+  body { display: flex; align-items: center; justify-content: center; padding: 20px; min-height: 100vh; }
+  .status-container { max-width: 760px; width: 100%; background: var(--ivory); border: 1px solid var(--border-soft); border-radius: 20px; padding: 2.4rem; box-shadow: var(--shadow-card); margin: 40px 0; }
+  .status-container h1 { font-size: 1.9rem; margin-bottom: 4px; }
+  .order-ref { background: var(--sand); padding: 10px 20px; border-radius: 40px; display: inline-block; margin: 14px 0; font-family: monospace; font-size: 1.05rem; border: 1px dashed var(--gold); }
+  .status-badge { display: inline-block; padding: 7px 18px; border-radius: 50px; font-weight: 700; text-transform: uppercase; font-size: 0.75rem; margin-left: 12px; letter-spacing: 0.5px; }
+  .status-pending { background: rgba(212,175,55,0.15); color: #B8892E; } .status-paid { background: rgba(76,175,80,0.15); color: #4CAF50; }
+  .status-shipped { background: rgba(33,150,243,0.15); color: #2196F3; } .status-delivered { background: rgba(76,175,80,0.2); color: #2e7d32; }
+  .status-cancelled { background: rgba(165,68,59,0.15); color: #A5443B; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 26px 0; background: var(--sand); border-radius: 16px; padding: 22px; }
+  .info-item { display: flex; flex-direction: column; }
+  .info-label { font-size: 0.7rem; color: var(--stone); text-transform: uppercase; letter-spacing: 1px; }
+  .info-value { font-size: 1rem; font-weight: 600; color: var(--ink); margin-top: 3px; }
+  .items-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+  .items-table th { text-align: left; padding: 10px 5px; color: var(--gold); border-bottom: 2px solid var(--border-soft); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; }
+  .items-table td { padding: 10px 5px; border-bottom: 1px solid var(--border-softer); }
+  .total-row { font-size: 1.2rem; font-weight: 700; text-align: right; margin-top: 16px; }
+  .not-found { text-align: center; padding: 3rem 1rem; }
+  .not-found i { font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; display: block; }
+</style>
+</head>
+<body>
+
+<div class="status-container">
+{% if order %}
+  <h1>Order Status</h1>
+  <div>
+    <span class="order-ref">#{{ order.paymentReference }}</span>
+    <span class="status-badge status-{{ order.status|lower }}">{{ order.status }}</span>
+  </div>
+  <div class="info-grid">
+    <div class="info-item"><span class="info-label">Customer</span><span class="info-value">{{ order.customerName }}</span></div>
+    <div class="info-item"><span class="info-label">Email</span><span class="info-value">{{ order.customerEmail or '—' }}</span></div>
+    <div class="info-item"><span class="info-label">Phone</span><span class="info-value">{{ order.customerPhone }}</span></div>
+    <div class="info-item"><span class="info-label">Delivery Address</span><span class="info-value">{{ order.deliveryAddress }}</span></div>
+    <div class="info-item"><span class="info-label">Order Date</span><span class="info-value">{{ order.createdAt.strftime('%d %b %Y, %H:%M') if order.createdAt else '—' }}</span></div>
+    <div class="info-item"><span class="info-label">Status</span><span class="info-value">{{ order.status }}</span></div>
+  </div>
+  <h3 style="margin-bottom:12px;">Items Ordered</h3>
+  <table class="items-table">
+    <thead><tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr></thead>
+    <tbody>
+      {% for item in order['items'] %}
+      <tr>
+        <td>{{ item.name }}{% if item.length %} ({{ item.length }}&Prime;){% endif %}{% if item.color %} - {{ item.color }}{% endif %}</td>
+        <td>{{ item.quantity }}</td>
+        <td>₦{{ "{:,.0f}".format(item.price) }}</td>
+        <td>₦{{ "{:,.0f}".format(item.price * item.quantity) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="total-row">Total: ₦{{ "{:,.0f}".format(order.amount) }}</div>
+  <a href="{{ url_for('home') }}" class="btn btn-gold" style="width:auto;display:inline-flex;margin-top:1.5rem;padding-left:28px;padding-right:28px;">Continue Shopping</a>
+{% else %}
+  <div class="not-found">
+    <i class="ri-error-warning-line"></i>
+    <h2>Order Not Found</h2>
+    <p style="color:var(--stone);margin:12px 0 1.5rem;">The order reference you provided does not exist.</p>
+    <a href="{{ url_for('home') }}" class="btn btn-gold" style="width:auto;display:inline-flex;padding-left:28px;padding-right:28px;">Back to Home</a>
+  </div>
+{% endif %}
+</div>
+</body>
+</html>

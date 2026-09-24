@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>500 · DIMMAHAIRSHOP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; text-align: center; padding: 2rem; min-height: 100vh; }
+    .error-container { max-width: 600px; }
+    .error-number { font-size: 8rem; font-weight: 300; letter-spacing: 8px; color: var(--gold); line-height: 1; margin-bottom: 1rem; }
+    h1 { font-size: 2rem; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem; }
+    p { color: var(--stone); margin-bottom: 2.5rem; font-size: 1rem; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-number">500</div>
+    <h1>Internal Server Error</h1>
+    <p>Something went wrong on our end.<br>Please try again in a moment, or message us on WhatsApp.</p>
+    <a href="/" class="btn btn-gold" style="width:auto;display:inline-flex;padding-left:28px;padding-right:28px;"><i class="ri-arrow-left-line"></i> Return Home</a>
+    <div class="brand-word" style="margin-top:2.5rem;font-size:1.1rem;">DIMMA<span>HAIRSHOP</span></div>
+  </div>
+</body>
+</html>

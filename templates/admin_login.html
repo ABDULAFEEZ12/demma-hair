@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>DIMMAHAIRSHOP · Admin Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; }
+    .login-wrapper { width: 100%; max-width: 420px; }
+    .login-container { background: var(--panel); border: 1px solid var(--border-light); padding: 2.8rem 2.2rem; box-shadow: var(--shadow-soft); border-radius: 6px; }
+    .brand { text-align: center; margin-bottom: 2.2rem; }
+    .brand h1 { font-size: 1.7rem; font-weight: 500; letter-spacing: 5px; text-transform: uppercase; color: #fff; margin-bottom: 0.5rem; }
+    .brand span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 3px; color: var(--stone-dark); display: block; border-bottom: 1px solid var(--border-light); padding-bottom: 1.3rem; }
+    .form-group { margin-bottom: 1.3rem; }
+    .form-group label { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; color: var(--stone); margin-bottom: 0.6rem; }
+    .input-wrapper { position: relative; }
+    .input-wrapper i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--stone-dark); }
+    .input-wrapper input { padding-left: 44px; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--stone-dark); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.8px; text-decoration: none; }
+    .back-link:hover { color: var(--gold); }
+    .footer-note { text-align: center; margin-top: 1.8rem; color: var(--stone-dark); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1.8px; }
+    @media (max-width: 480px) { .login-container { padding: 2.2rem 1.4rem; } .brand h1 { font-size: 1.4rem; letter-spacing: 3px; } }
+  </style>
+</head>
+<body>
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="brand"><h1>DIMMAHAIRSHOP</h1><span>Administration</span></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}" style="margin-bottom:1.5rem;"><i class="ri-information-line" style="margin-right:8px;"></i>{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group"><label>Email Address</label><div class="input-wrapper"><i class="ri-mail-line"></i><input type="email" name="email" placeholder="admin@dimmahairshop.com" required autofocus></div></div>
+      <div class="form-group"><label>Password</label><div class="input-wrapper"><i class="ri-lock-line"></i><input type="password" name="password" placeholder="••••••••" required></div></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;"><i class="ri-login-box-line"></i> Sign In</button>
+    </form>
+
+    <div style="display:flex;justify-content:center;margin-top:1.6rem;">
+      <a href="{{ url_for('home') }}" class="back-link"><i class="ri-arrow-left-line"></i> Return to Store</a>
+    </div>
+  </div>
+  <div class="footer-note">© {{ current_year }} DIMMAHAIRSHOP · Secure Access</div>
+</div>
+</body>
+</html>

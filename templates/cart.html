@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>Your Bag · DIMMAHAIRSHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+<style>
+  .cart-page { padding: 116px 5% 4rem; max-width: 900px; margin: 0 auto; }
+  @media (max-width: 959px) { .cart-page { padding-top: 150px; } }
+  .cart-page h1 { margin-bottom: 1.8rem; }
+  .cart-row { display: flex; gap: 1.2rem; align-items: center; padding: 1.4rem 0; border-bottom: 1px solid var(--border-soft); }
+  .cart-row img { width: 78px; height: 92px; object-fit: cover; border-radius: 8px; background: var(--sand); flex-shrink: 0; }
+  .cart-row-info { flex: 1; min-width: 0; }
+  .cart-row-info strong { font-family: var(--font-display); font-size: 1.05rem; display: block; margin-bottom: 4px; }
+  .cart-row-meta { font-size: 0.78rem; color: var(--stone); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .cart-row-price { font-weight: 600; }
+  .qty-stepper { display: flex; align-items: center; gap: 10px; background: var(--sand); border-radius: 40px; padding: 5px 12px; margin-top: 8px; width: fit-content; }
+  .qty-stepper button { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--ink); width: 24px; }
+  .cart-row-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+  .remove-btn { background: none; border: none; color: var(--stone-light); font-size: 1.4rem; cursor: pointer; }
+  .remove-btn:hover { color: #A5443B; }
+  .cart-summary-box { margin-top: 2rem; background: var(--sand); border-radius: 14px; padding: 1.8rem; }
+  .cart-summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.9rem; color: var(--espresso); }
+  .cart-summary-row.total { font-size: 1.2rem; font-weight: 700; color: var(--ink); border-top: 1px solid var(--border-soft); margin-top: 10px; padding-top: 14px; }
+  .cart-empty { text-align: center; padding: 5rem 1.5rem; }
+  .cart-empty i { font-size: 3.5rem; color: var(--gold); margin-bottom: 1.2rem; display: block; }
+  .delivery-note { font-size: 0.82rem; color: var(--stone); margin-top: 0.8rem; }
+  .cart-actions-row { display: flex; gap: 1rem; margin-top: 1.6rem; flex-wrap: wrap; }
+  .cart-actions-row .btn, .cart-actions-row a.btn { width: auto; flex: 1; min-width: 200px; }
+</style>
+</head>
+<body>
+
+{% set active_nav = None %}
+{% include "_side_menu.html" %}
+{% include "_top_bar.html" %}
+{% include "_cart_drawer.html" %}
+
+<main class="cart-page">
+  <h1>Your Bag</h1>
+  <div id="cartPageContent"></div>
+</main>
+
+{% include "_footer.html" %}
+{% include "_bottom_nav.html" %}
+{% include "_wa_float.html" %}
+{% include "_site_scripts.html" %}
+<script>
+(function () {
+  function escapeHtml(str) { return String(str).replace(/[&<>]/g, function (m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]; }); }
+  function renderPage() {
+    const cart = DimmaCart.get();
+    const el = document.getElementById('cartPageContent');
+    if (!cart.length) {
+      el.innerHTML = '<div class="cart-empty"><i class="ri-shopping-bag-3-line"></i><p style="color:var(--stone);margin-bottom:1.5rem;">Your bag is empty.</p><a href="{{ url_for("shop") }}" class="hero-cta primary" style="display:inline-flex;">Shop Collection</a></div>';
+      return;
+    }
+    let rows = '', total = 0;
+    cart.forEach(function (item, idx) {
+      const lineTotal = item.price * item.quantity;
+      total += lineTotal;
+      const meta = [item.length ? item.length + '" length' : '', item.color || ''].filter(Boolean).join(' · ');
+      rows += '<div class="cart-row">' +
+        '<img src="' + (item.image || 'https://via.placeholder.com/160x190/F1E7D8/AD8A4D?text=DIMMA') + '" alt="' + escapeHtml(item.name) + '">' +
+        '<div class="cart-row-info"><strong>' + escapeHtml(item.name) + '</strong>' +
+        (meta ? '<div class="cart-row-meta">' + escapeHtml(meta) + '</div>' : '') +
+        '<div class="cart-row-price">₦' + item.price.toLocaleString() + '</div>' +
+        '<div class="qty-stepper"><button class="qty-dec" data-idx="' + idx + '">−</button><span>' + item.quantity + '</span><button class="qty-inc" data-idx="' + idx + '">+</button></div></div>' +
+        '<div class="cart-row-actions"><strong>₦' + lineTotal.toLocaleString() + '</strong><button class="remove-btn" data-idx="' + idx + '" aria-label="Remove"><i class="ri-delete-bin-line"></i></button></div>' +
+        '</div>';
+    });
+    el.innerHTML = rows +
+      '<div class="cart-summary-box">' +
+      '<div class="cart-summary-row"><span>Subtotal</span><span>₦' + total.toLocaleString() + '</span></div>' +
+      '<div class="cart-summary-row"><span>Delivery</span><span>Calculated at checkout</span></div>' +
+      '<div class="cart-summary-row total"><span>Total</span><span>₦' + total.toLocaleString() + '</span></div>' +
+      '<div class="delivery-note"><i class="ri-truck-line"></i> Nationwide delivery across Nigeria. Lagos orders ship via local delivery; other states via trusted logistics partners.</div>' +
+      '</div>' +
+      '<div class="cart-actions-row">' +
+      '<a href="{{ url_for("shop") }}" class="btn btn-outline">Continue Shopping</a>' +
+      '<a href="{{ url_for("checkout") }}" class="btn btn-gold">Proceed to Checkout</a>' +
+      '</div>';
+
+    el.querySelectorAll('.qty-inc').forEach(function (btn) {
+      btn.addEventListener('click', function () { const c = DimmaCart.get(); c[btn.dataset.idx].quantity++; DimmaCart.save(c); renderPage(); });
+    });
+    el.querySelectorAll('.qty-dec').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const c = DimmaCart.get(); const i = btn.dataset.idx;
+        if (c[i].quantity > 1) c[i].quantity--; else c.splice(i, 1);
+        DimmaCart.save(c); renderPage();
+      });
+    });
+    el.querySelectorAll('.remove-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () { const c = DimmaCart.get(); c.splice(btn.dataset.idx, 1); DimmaCart.save(c); renderPage(); });
+    });
+  }
+  renderPage();
+})();
+</script>
+</body>
+</html>

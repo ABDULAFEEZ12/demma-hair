@@ -1,0 +1,26 @@
+<button class="search-icon" id="searchToggle" aria-label="Search"><i class="ri-search-line"></i></button>
+
+<div class="search-overlay" id="searchOverlay">
+  <form class="search-form" action="{{ url_for('search') }}" method="GET">
+    <input type="text" name="q" id="searchInput" placeholder="Search products..." autocomplete="off" value="{{ search_query or '' }}">
+    <button type="submit" aria-label="Submit search"><i class="ri-search-line"></i></button>
+    <button type="button" class="search-close" id="searchClose" aria-label="Close search"><i class="ri-close-line"></i></button>
+  </form>
+</div>
+
+<script>
+(function(){
+  var toggle = document.getElementById('searchToggle');
+  var overlay = document.getElementById('searchOverlay');
+  var closeBtn = document.getElementById('searchClose');
+  var input = document.getElementById('searchInput');
+  if (!toggle || !overlay) return;
+  function openSearch(){ overlay.classList.add('open'); setTimeout(function(){ input.focus(); }, 200); }
+  function closeSearch(){ overlay.classList.remove('open'); }
+  toggle.addEventListener('click', function(){
+    overlay.classList.contains('open') ? closeSearch() : openSearch();
+  });
+  if (closeBtn) closeBtn.addEventListener('click', closeSearch);
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeSearch(); });
+})();
+</script>

@@ -1,0 +1,147 @@
+<div id="overlay"></div>
+<div id="modalContainer"></div>
+
+<script>
+window.DimmaCart = (function () {
+  const KEY = 'dimmaCart';
+  function escapeHtml(str) { return String(str).replace(/[&<>]/g, function (m) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]; }); }
+  function get() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+  function count(cart) { return (cart || get()).reduce(function (s, i) { return s + (i.quantity || 1); }, 0); }
+  function render() {
+    const cart = get();
+    const countEl = document.getElementById('cart-count');
+    if (countEl) countEl.textContent = count(cart);
+    const itemsEl = document.getElementById('cartItemsContainer');
+    const totalEl = document.getElementById('cartTotal');
+    if (!itemsEl) return;
+    if (!cart.length) {
+      itemsEl.innerHTML = '<p style="text-align:center;padding:3rem;color:#999;">Your bag is empty</p>';
+      if (totalEl) totalEl.textContent = '₦0';
+      return;
+    }
+    let total = 0, html = '';
+    cart.forEach(function (item, idx) {
+      total += item.price * item.quantity;
+      const meta = [item.length ? item.length + '"' : '', item.color || ''].filter(Boolean).join(' · ');
+      html += '<div class="cart-item"><div><strong>' + escapeHtml(item.name) + '</strong>' +
+        (meta ? '<br><small>' + escapeHtml(meta) + '</small>' : '') +
+        '<br><small>Qty: ' + item.quantity + ' × ₦' + item.price.toLocaleString() + '</small></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;"><span>₦' + (item.price * item.quantity).toLocaleString() +
+        '</span><button class="remove-item" data-idx="' + idx + '" style="background:none;border:none;cursor:pointer;color:#999;font-size:1.5rem;">×</button></div></div>';
+    });
+    itemsEl.innerHTML = html;
+    if (totalEl) totalEl.textContent = '₦' + total.toLocaleString();
+    itemsEl.querySelectorAll('.remove-item').forEach(function (btn) {
+      btn.addEventListener('click', function () { const c = get(); c.splice(parseInt(btn.dataset.idx, 10), 1); save(c); });
+    });
+  }
+  function save(cart) { localStorage.setItem(KEY, JSON.stringify(cart)); render(); }
+  function quickAdd(id, name, price, stock, image) {
+    const cart = get();
+    const st = parseInt(stock, 10);
+    const existing = cart.find(function (i) { return i.id === id && !i.length && !i.color; });
+    if (existing) {
+      if (!isNaN(st) && existing.quantity >= st) { window.DimmaModal.show('error', 'Limited Stock', 'Only ' + st + ' left in stock.'); return false; }
+      existing.quantity++;
+    } else {
+      cart.push({ id: id, name: name, price: parseFloat(price), quantity: 1, length: '', color: '', image: image || '' });
+    }
+    save(cart);
+    return true;
+  }
+  function addLine(id, name, price, quantity, length, color, maxStock, image) {
+    const cart = get();
+    const sameLine = cart.filter(function (i) { return i.id === id && (i.length || '') === (length || ''); });
+    const already = sameLine.reduce(function (s, i) { return s + (i.quantity || 0); }, 0);
+    if (!isNaN(maxStock) && already + quantity > maxStock) return { ok: false, canAdd: Math.max(0, maxStock - already) };
+    const existing = cart.find(function (i) { return i.id === id && (i.length || '') === (length || '') && (i.color || '') === (color || ''); });
+    if (existing) existing.quantity += quantity;
+    else cart.push({ id: id, name: name, price: price, quantity: quantity, length: length || '', color: color || '', image: image || '' });
+    save(cart);
+    return { ok: true };
+  }
+  function clear() { save([]); }
+  return { get: get, save: save, render: render, quickAdd: quickAdd, addLine: addLine, clear: clear, count: count };
+})();
+
+window.DimmaModal = {
+  show: function (type, title, msg) {
+    const cont = document.getElementById('modalContainer');
+    if (!cont) { alert(title + ': ' + msg); return; }
+    const icons = { success: 'ri-checkbox-circle-fill', error: 'ri-error-warning-fill' };
+    cont.innerHTML = '<div class="modal-overlay active"><div class="modal-content"><div class="modal-header"><i class="' +
+      (icons[type] || 'ri-information-fill') + '"></i><h3>' + title + '</h3></div><div class="modal-body">' + msg +
+      '</div><div class="modal-footer"><button class="modal-btn modal-btn-primary" id="modalOkBtn">OK</button></div></div></div>';
+    document.getElementById('modalOkBtn').addEventListener('click', function () { cont.innerHTML = ''; });
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  const menuToggle = document.getElementById('menu-toggle'), sideMenu = document.getElementById('side-menu'),
+    overlay = document.getElementById('overlay'), closeSidebar = document.getElementById('closeSidebar');
+  function openMenu() { if (sideMenu) sideMenu.classList.add('active'); if (overlay) overlay.classList.add('active'); }
+  function closeMenu() { if (sideMenu) sideMenu.classList.remove('active'); if (overlay) overlay.classList.remove('active'); }
+  if (menuToggle) menuToggle.addEventListener('click', openMenu);
+  if (closeSidebar) closeSidebar.addEventListener('click', closeMenu);
+  if (overlay) overlay.addEventListener('click', function () { closeMenu(); closeCartFn(); });
+  document.querySelectorAll('.sidebar-nav a, .sidebar-cat-chips a').forEach(function (l) { l.addEventListener('click', closeMenu); });
+
+  const cartIcon = document.getElementById('cartIcon'), cartSidebar = document.getElementById('cartSidebar'),
+    closeCart = document.getElementById('close-cart');
+  function openCartFn() { if (cartSidebar) cartSidebar.classList.add('open'); }
+  function closeCartFn() { if (cartSidebar) cartSidebar.classList.remove('open'); }
+  if (cartIcon) cartIcon.addEventListener('click', openCartFn);
+  if (closeCart) closeCart.addEventListener('click', closeCartFn);
+  window.DimmaOpenCart = openCartFn;
+
+  const bottomCartToggle = document.getElementById('bottomCartToggle'), bottomMenuToggle = document.getElementById('bottomMenuToggle');
+  if (bottomCartToggle) bottomCartToggle.addEventListener('click', openCartFn);
+  if (bottomMenuToggle) bottomMenuToggle.addEventListener('click', openMenu);
+
+  const clearCartBtn = document.getElementById('clearCartBtn');
+  if (clearCartBtn) clearCartBtn.addEventListener('click', function () { DimmaCart.clear(); });
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if (checkoutBtn) checkoutBtn.addEventListener('click', function () {
+    if (!DimmaCart.get().length) { DimmaModal.show('error', 'Bag Empty', 'Add something to your bag first.'); return; }
+    window.location.href = '{{ url_for("checkout") }}';
+  });
+
+  document.querySelectorAll('.quick-add').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      if (btn.dataset.hasLengths) { window.location.href = '/product/' + btn.dataset.id; return; }
+      const ok = DimmaCart.quickAdd(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.stock, btn.dataset.image);
+      if (ok) openCartFn();
+    });
+  });
+
+  document.querySelectorAll('.wa-ask-btn').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      const name = btn.dataset.name || 'this product';
+      const msg = encodeURIComponent('Hello {{ BRAND_NAME }}, I\'m interested in ' + name + '. Please is it available?');
+      window.open('{{ WHATSAPP_LINK }}?text=' + msg, '_blank');
+    });
+  });
+
+  const progressBar = document.getElementById('scroll-progress');
+  if (progressBar) {
+    function updateScroll() {
+      const s = window.scrollY, wh = document.documentElement.scrollHeight - window.innerHeight;
+      progressBar.style.width = wh > 0 ? (s / wh) * 100 + '%' : '0%';
+    }
+    window.addEventListener('scroll', updateScroll); updateScroll();
+  }
+
+  const fe = document.querySelectorAll('.fade-up');
+  if (fe.length && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-reveal-ready');
+    const ob = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) en.target.classList.add('visible'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    fe.forEach(function (el) { ob.observe(el); });
+  }
+
+  DimmaCart.render();
+});
+</script>

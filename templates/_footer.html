@@ -1,0 +1,53 @@
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4 class="brand-word" style="font-size:1.25rem;color:#fff;">DIMMA<span>HAIRSHOP</span></h4>
+      <p style="margin-top:0.8rem;">{{ BRAND_SLOGAN }}</p>
+      <div class="social-links">
+        <a href="{{ INSTAGRAM_URL }}" target="_blank" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+        <a href="{{ TIKTOK_URL }}" target="_blank" aria-label="TikTok"><i class="ri-tiktok-line"></i></a>
+        <a href="{{ WHATSAPP_LINK }}" target="_blank" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        {% for cat in ALL_CATEGORIES %}
+        <li><a href="{{ url_for(cat.endpoint) }}">{{ cat.label }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Customer Care</h4>
+      <ul>
+        <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        <li><a href="{{ url_for('about') }}#delivery">Delivery</a></li>
+        <li><a href="{{ url_for('about') }}#returns">Returns &amp; Exchanges</a></li>
+        <li><a href="{{ url_for('home') }}#faq">FAQ</a></li>
+        <li><a href="{{ url_for('track_order') }}">Order Tracking</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Wholesale</h4>
+      <ul>
+        <li><a href="{{ url_for('wholesale') }}">Wholesale Enquiry</a></li>
+        <li><a href="{{ url_for('wholesale') }}">Bulk Orders</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="{{ WHATSAPP_LINK }}" target="_blank"><i class="ri-whatsapp-line"></i> {{ WHATSAPP_NUMBER_DISPLAY }}</a></li>
+        <li><a href="{{ INSTAGRAM_URL }}" target="_blank"><i class="ri-instagram-line"></i> {{ INSTAGRAM_HANDLE }}</a></li>
+        <li><a href="{{ TIKTOK_URL }}" target="_blank"><i class="ri-tiktok-line"></i> {{ TIKTOK_HANDLE }}</a></li>
+        <li style="opacity:0.85;">
+          {% for line in BUSINESS_ADDRESS_LINES %}{{ line }}<br>{% endfor %}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© {{ current_year }} {{ BRAND_NAME }}. All rights reserved.</span>
+    <span>Retail &amp; Wholesale · Nationwide Delivery</span>
+  </div>
+</footer>

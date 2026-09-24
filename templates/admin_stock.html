@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="admin-container">
+{% set active_page = 'stock' %}
+{% include "_admin_header.html" %}
+
+  <div class="stat-row">
+    <div class="stat-card"><div class="num">{{ total_stock }}</div><div class="label">Units In Stock</div></div>
+    <div class="stat-card"><div class="num">{{ total_sold }}</div><div class="label">Units Sold</div></div>
+    <div class="stat-card"><div class="num">{{ sold_out_count }}</div><div class="label">Sold Out Products</div></div>
+    <div class="stat-card"><div class="num">{{ products|length }}</div><div class="label">Total Products</div></div>
+  </div>
+
+  <div class="section">
+    <h2><i class="ri-archive-line" style="margin-right: 10px;"></i> Stock</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>In Stock</th><th>Sold</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td>{% if product.image %}<img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">{% else %}<div class="product-image" style="display:flex;align-items:center;justify-content:center;color:var(--stone-dark);"><i class="ri-image-line"></i></div>{% endif %}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.category }}</td>
+            <td><strong>{{ product.stock|default(0) }}</strong></td>
+            <td>{{ product.sold }}</td>
+            <td>
+              {% if (product.stock|default(0)) <= 0 %}<span class="status-badge sold-out">Sold Out</span>
+              {% elif (product.stock|default(0)) <= 5 %}<span class="status-badge low-stock">Low Stock</span>
+              {% else %}<span class="status-badge in-stock">In Stock</span>{% endif %}
+            </td>
+            <td>
+              {% if product.soldByLength or product.soldByColor or product.lengthStock %}
+              <details>
+                <summary class="view-details-summary">Breakdown</summary>
+                <div class="variant-breakdown">
+                  {% if product.lengthStock or product.soldByLength %}
+                  <div>
+                    <h4>By Length</h4>
+                    <table class="variant-table">
+                      <thead><tr><th>Length</th><th>Left</th><th>Sold</th></tr></thead>
+                      <tbody>
+                        {% set all_lengths = ((product.lengthStock or {}).keys()|list + (product.soldByLength or {}).keys()|list) | unique | list %}
+                        {% for l in all_lengths %}
+                        <tr>
+                          <td>{{ l }}&Prime;</td>
+                          <td{% if (product.lengthStock or {}).get(l, 0) <= 0 %} class="zero"{% endif %}>{{ (product.lengthStock or {}).get(l, 0) }}</td>
+                          <td>{{ (product.soldByLength or {}).get(l, 0) }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  {% endif %}
+                  {% if product.soldByColor %}
+                  <div>
+                    <h4>By Color</h4>
+                    <table class="variant-table">
+                      <thead><tr><th>Color</th><th>Sold</th></tr></thead>
+                      <tbody>{% for c, qty in product.soldByColor.items() %}<tr><td>{{ c }}</td><td>{{ qty }}</td></tr>{% endfor %}</tbody>
+                    </table>
+                  </div>
+                  {% endif %}
+                </div>
+              </details>
+              {% else %}<span style="color:var(--stone-dark);">—</span>{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" style="text-align:center;padding:3rem;color:var(--stone-dark);"><i class="ri-inbox-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No products yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

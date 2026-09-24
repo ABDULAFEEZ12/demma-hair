@@ -1,0 +1,31 @@
+<div class="product-card fade-up">
+  <a href="{{ url_for('product_detail', product_id=product._id) }}">
+    <div class="product-img-wrap">
+      <div class="product-badge-row">
+        {% if product.salePrice and product.salePrice > 0 and product.salePrice < product.price %}<span class="product-tag sale">Sale</span>{% endif %}
+        {% if product.newArrival %}<span class="product-tag new">New</span>{% endif %}
+        {% if product.wholesaleAvailable %}<span class="product-tag wholesale">Wholesale</span>{% endif %}
+      </div>
+      <img src="{{ product.image or 'https://via.placeholder.com/400x500/F1E7D8/AD8A4D?text=DIMMAHAIRSHOP' }}" alt="{{ product.name }}" loading="lazy">
+      <button class="quick-add" data-id="{{ product._id }}" data-name="{{ product.name }}" data-price="{{ product.salePrice if (product.salePrice and product.salePrice > 0 and product.salePrice < product.price) else product.price }}" data-stock="{{ product.stock if product.stock is defined else '' }}" data-has-lengths="{{ '1' if product.lengths else '' }}" data-image="{{ product.image or '' }}" aria-label="Quick add" {% if product.stock is defined and product.stock <= 0 %}disabled{% endif %}><i class="ri-add-line"></i></button>
+      <button class="wa-ask-btn" data-name="{{ product.name }}" aria-label="Ask about this hair on WhatsApp"><i class="ri-whatsapp-fill"></i></button>
+    </div>
+    <div class="product-info">
+      {% if product.lengths and product.lengths|length == 1 %}<div class="product-length-badge">{{ product.lengths[0] }}&Prime;</div>
+      {% elif product.lengths and product.lengths|length > 1 %}<div class="product-length-badge" style="font-size:0.85rem;">{{ product.lengths|length }} Lengths</div>{% endif %}
+      <div class="product-brand">{{ product.category or 'DIMMAHAIRSHOP' }}</div>
+      <div class="product-name">{{ product.name }}</div>
+      {% if product.texture %}<div class="product-meta">{{ product.texture }}</div>{% endif %}
+      <div class="product-price-row">
+        {% if product.salePrice and product.salePrice > 0 and product.salePrice < product.price %}
+        <span class="product-price has-sale">{{ format_currency(product.salePrice) }}</span>
+        <span class="product-price-old">{{ format_currency(product.price) }}</span>
+        {% else %}
+        <span class="product-price">{{ format_currency(product.price) }}</span>
+        {% endif %}
+      </div>
+      {% if product.stock is defined and product.stock <= 0 %}<div class="product-stock-note">Out of stock</div>
+      {% elif product.stock is defined and product.stock <= 5 %}<div class="product-stock-note" style="color:var(--gold);">Only {{ product.stock }} left</div>{% endif %}
+    </div>
+  </a>
+</div>

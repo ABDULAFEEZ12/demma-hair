@@ -1,0 +1,19 @@
+{% if total_pages and total_pages > 1 %}
+<nav class="pagination-nav" aria-label="Pagination">
+  {% if page > 1 %}
+  <a href="{{ url_for(endpoint, page=page-1, **pagination_args) }}">‹ Prev</a>
+  {% endif %}
+  {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}
+    <span class="current">{{ p }}</span>
+    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+    <a href="{{ url_for(endpoint, page=p, **pagination_args) }}">{{ p }}</a>
+    {% elif p == page - 3 or p == page + 3 %}
+    <span class="ellipsis">…</span>
+    {% endif %}
+  {% endfor %}
+  {% if page < total_pages %}
+  <a href="{{ url_for(endpoint, page=page+1, **pagination_args) }}">Next ›</a>
+  {% endif %}
+</nav>
+{% endif %}

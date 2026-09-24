@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wholesale Enquiries · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="admin-container">
+{% set active_page = 'wholesale' %}
+{% include "_admin_header.html" %}
+
+  <div class="section">
+    <h2><i class="ri-briefcase-4-line" style="margin-right: 10px;"></i> Wholesale Enquiries</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Date</th><th>Name</th><th>Business</th><th>Phone</th><th>WhatsApp</th><th>Type</th><th>Products</th><th>Qty</th><th>Budget</th><th>Message</th></tr></thead>
+        <tbody>
+          {% for e in enquiries %}
+          <tr>
+            <td>{% if e.createdAt %}{{ e.createdAt.strftime('%d/%m/%y %H:%M') }}{% else %}—{% endif %}</td>
+            <td><strong>{{ e.name or '—' }}</strong>{% if e.email %}<br><small style="color:var(--stone-dark);">{{ e.email }}</small>{% endif %}</td>
+            <td>{{ e.businessName or '—' }}</td>
+            <td>{{ e.phone or '—' }}</td>
+            <td>{{ e.whatsapp or '—' }}</td>
+            <td>{{ e.businessType or '—' }}</td>
+            <td>{{ e.productsInterested or '—' }}</td>
+            <td>{{ e.quantity or '—' }}</td>
+            <td>{{ e.budget or '—' }}</td>
+            <td>{{ e.message or '—' }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="10" style="text-align:center;padding:3rem;color:var(--stone-dark);"><i class="ri-briefcase-4-line" style="font-size:2rem;display:block;margin-bottom:1rem;"></i>No wholesale enquiries yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

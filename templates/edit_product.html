@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Product · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+<div class="admin-container">
+  <h1>Edit Product</h1>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="section">
+    <form method="POST" action="{{ url_for('edit_product', product_id=product._id) }}" enctype="multipart/form-data">
+      {% include "_admin_product_fields.html" %}
+      <button type="submit" class="btn btn-primary" style="margin-top:1.5rem;"><i class="ri-save-line"></i> Save Changes</button>
+      <a href="{{ url_for('admin_products') }}" class="btn" style="margin-top:1.5rem;margin-left:1rem;"><i class="ri-arrow-left-line"></i> Cancel</a>
+    </form>
+  </div>
+</div>
+</body>
+</html>

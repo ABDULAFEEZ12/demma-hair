@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>Checkout · DIMMAHAIRSHOP</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+<style>
+  body { display: flex; align-items: center; justify-content: center; padding: 20px; min-height: 100vh; }
+  .checkout-container { max-width: 960px; width: 100%; background: var(--ivory); border: 1px solid var(--border-soft); border-radius: 20px; padding: 2.6rem; box-shadow: var(--shadow-card); margin: 100px 0 2rem; }
+  .checkout-container h1 { font-size: 1.9rem; margin-bottom: 4px; }
+  .checkout-subtitle { color: var(--stone); margin-bottom: 1.8rem; border-bottom: 1px solid var(--border-soft); padding-bottom: 16px; font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase; }
+  .checkout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.8rem; }
+  .section-title { display: flex; align-items: center; gap: 10px; font-size: 1.25rem; margin-bottom: 1.2rem; }
+  .section-title i { color: var(--gold); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; margin-bottom: 6px; color: var(--stone); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1.3px; }
+  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 13px 16px; background: var(--sand); border: 1px solid var(--border-soft); border-radius: 40px; color: var(--ink); font-size: 0.88rem; }
+  .form-group textarea { border-radius: 20px; resize: vertical; min-height: 70px; }
+  .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239C8C7C' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 18px center; cursor: pointer; }
+  .row-2 { display: flex; gap: 12px; }
+  .row-2 .form-group { flex: 1; }
+  .cart-summary { background: var(--sand); border-radius: 16px; padding: 20px; }
+  .cart-summary-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-softer); font-size: 0.85rem; color: var(--espresso); }
+  .cart-summary-total { display: flex; justify-content: space-between; margin-top: 14px; font-weight: 700; font-size: 1.1rem; }
+  .pay-note { font-size: 0.78rem; color: var(--stone); margin-top: 10px; line-height: 1.6; }
+  .secure-notice { text-align: center; margin-top: 14px; color: var(--stone); font-size: 0.75rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .secure-notice i { color: #4CAF50; }
+  @media (max-width: 768px) { .checkout-container { padding: 1.6rem; margin-top: 130px; } .checkout-grid { grid-template-columns: 1fr; gap: 1.8rem; } .row-2 { flex-direction: column; gap: 0; } }
+</style>
+</head>
+<body>
+
+<div class="checkout-container">
+  <h1 class="brand-word">DIMMA<span>HAIRSHOP</span></h1>
+  <div class="checkout-subtitle">Secure checkout · pay by card, bank transfer or USSD</div>
+
+  <div class="checkout-grid">
+    <div>
+      <div class="section-title"><i class="ri-user-line"></i><span>Your Details</span></div>
+      <div class="form-group"><label>Full Name *</label><input id="fullName" placeholder="Enter your full name" required></div>
+      <div class="form-group"><label>Phone Number *</label><input id="phone" type="tel" placeholder="080xxxxxxxx" required></div>
+      <div class="form-group"><label>WhatsApp Number *</label><input id="whatsapp" type="tel" placeholder="080xxxxxxxx" required></div>
+      <div class="form-group"><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div>
+      <div class="form-group"><label>Delivery Address *</label><textarea id="address" rows="2" placeholder="Enter your full delivery address" required></textarea></div>
+      <div class="row-2">
+        <div class="form-group">
+          <label>State *</label>
+          <select id="state" required>
+            <option value="">Select State</option>
+            <option>Lagos</option><option>Abuja (FCT)</option><option>Ogun</option><option>Oyo</option>
+            <option>Osun</option><option>Ondo</option><option>Ekiti</option><option>Rivers</option>
+            <option>Delta</option><option>Edo</option><option>Anambra</option><option>Enugu</option>
+            <option>Imo</option><option>Abia</option><option>Ebonyi</option><option>Kaduna</option>
+            <option>Kano</option><option>Katsina</option><option>Jigawa</option><option>Zamfara</option>
+            <option>Sokoto</option><option>Kebbi</option><option>Niger</option><option>Kwara</option>
+            <option>Kogi</option><option>Benue</option><option>Plateau</option><option>Nasarawa</option>
+            <option>Taraba</option><option>Adamawa</option><option>Borno</option><option>Yobe</option>
+            <option>Bauchi</option><option>Gombe</option><option>Bayelsa</option><option>Akwa Ibom</option>
+            <option>Cross River</option><option>Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Country *</label>
+          <select id="country" required>
+            <option value="Nigeria" selected>Nigeria</option>
+            <option value="Ghana">Ghana</option>
+            <option value="United Kingdom">United Kingdom</option>
+            <option value="United States">United States</option>
+            <option value="Canada">Canada</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Order Notes (optional)</label><textarea id="orderNotes" rows="2" placeholder="Anything we should know about your order?"></textarea></div>
+    </div>
+
+    <div>
+      <div class="section-title"><i class="ri-shopping-bag-line"></i><span>Your Bag</span></div>
+      <div class="cart-summary" id="cartSummary"></div>
+
+      <button class="btn btn-gold" id="payNow" style="margin-top:20px;"><i class="ri-bank-card-line"></i> Pay Now</button>
+      <p class="pay-note">You'll be redirected to our secure payment partner to complete payment by card, bank transfer or USSD. Your order is only recorded once payment is verified.</p>
+      <div class="secure-notice"><i class="ri-shield-check-line"></i> Secured checkout &middot; Nationwide delivery</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function getCart() { try { return JSON.parse(localStorage.getItem("dimmaCart")) || []; } catch (e) { return []; } }
+
+  function renderCart() {
+    const cart = getCart();
+    const summary = document.getElementById("cartSummary");
+    let html = "", total = 0;
+    if (!cart.length) {
+      summary.innerHTML = '<p style="text-align:center;padding:2rem;color:#999;">Your bag is empty.</p>';
+      return 0;
+    }
+    cart.forEach(function (item) {
+      const subtotal = item.price * (item.quantity || 1);
+      total += subtotal;
+      const lengthLabel = item.length ? ' · ' + item.length + '"' : '';
+      const colorLabel = item.color ? ' · ' + item.color : '';
+      html += '<div class="cart-summary-item"><span>' + item.name + lengthLabel + colorLabel + ' (×' + (item.quantity || 1) + ')</span><span>₦' + subtotal.toLocaleString() + '</span></div>';
+    });
+    html += '<div class="cart-summary-total"><span>Total</span><span>₦' + total.toLocaleString() + '</span></div>';
+    summary.innerHTML = html;
+    return total;
+  }
+
+  const total = renderCart();
+
+  document.getElementById("payNow").onclick = function () {
+    const name = document.getElementById("fullName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const whatsapp = document.getElementById("whatsapp").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const address = document.getElementById("address").value.trim();
+    const state = document.getElementById("state").value;
+    const country = document.getElementById("country").value;
+    const orderNotes = document.getElementById("orderNotes").value.trim();
+
+    if (!name || !phone || !whatsapp || !address || !state || !country) {
+      alert("Please fill all required fields");
+      return;
+    }
+    if (total === 0) {
+      alert("Your bag is empty.");
+      return;
+    }
+
+    const reference = "DIMMA-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+
+    localStorage.setItem("dimmaLastOrder", JSON.stringify({
+      reference: reference, name: name, phone: phone, whatsapp: whatsapp, email: email,
+      address: address, state: state, country: country, orderNotes: orderNotes, cart: getCart(), total: total
+    }));
+
+    const payBtn = document.getElementById("payNow");
+    payBtn.disabled = true;
+    payBtn.innerHTML = '<i class="ri-loader-4-line"></i> Creating payment...';
+
+    fetch('/create-payment-link', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        amount: total, email: email || 'customer@dimmahairshop.com', name: name, reference: reference,
+        customerName: name, customerPhone: phone, customerWhatsapp: whatsapp, customerEmail: email,
+        deliveryAddress: address, state: state, country: country, orderNotes: orderNotes, items: getCart()
+      })
+    })
+    .then(function (res) { return res.json(); })
+    .then(function (data) {
+      if (data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        alert(data.error || "Could not start payment. Please try again.");
+        payBtn.disabled = false;
+        payBtn.innerHTML = 'Pay Now';
+      }
+    })
+    .catch(function () {
+      alert("Could not reach the payment service. Please check your connection and try again.");
+      payBtn.disabled = false;
+      payBtn.innerHTML = 'Pay Now';
+    });
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<nav class="mobile-cat-nav">
+  <div class="mobile-cat-nav-inner">
+    <a href="{{ url_for('shop') }}" class="mobile-cat-link {{ 'active' if active_nav == 'shop' }}">SHOP ALL</a>
+    {% for cat in ALL_CATEGORIES %}
+    <a href="{{ url_for(cat.endpoint) }}" class="mobile-cat-link {{ 'active' if active_nav == cat.slug }}">{{ cat.label.upper() }}</a>
+    {% endfor %}
+    <a href="{{ url_for('wholesale') }}" class="mobile-cat-link {{ 'active' if active_nav == 'wholesale' }}">WHOLESALE</a>
+  </div>
+</nav>

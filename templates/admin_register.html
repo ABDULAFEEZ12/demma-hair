@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>New Admin · DIMMAHAIRSHOP Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; }
+    .register-wrapper { width: 100%; max-width: 440px; }
+    .register-container { background: var(--panel); border: 1px solid var(--border-light); padding: 2.8rem 2.2rem; box-shadow: var(--shadow-soft); border-radius: 6px; }
+    .brand { text-align: center; margin-bottom: 2.2rem; }
+    .brand h1 { font-size: 1.5rem; font-weight: 500; letter-spacing: 4px; text-transform: uppercase; color: #fff; margin-bottom: 0.5rem; }
+    .brand span { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 3px; color: var(--stone-dark); display: block; border-bottom: 1px solid var(--border-light); padding-bottom: 1.3rem; }
+    .form-group { margin-bottom: 1.3rem; }
+    .form-group label { display: block; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; color: var(--stone); margin-bottom: 0.6rem; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--stone-dark); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.8px; text-decoration: none; }
+    .back-link:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="register-wrapper">
+  <div class="register-container">
+    <div class="brand"><h1>New Admin</h1><span>DIMMAHAIRSHOP Administration</span></div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}" style="margin-bottom:1.5rem;">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="new-admin@dimmahairshop.com" required></div>
+      <div class="form-group"><label>Password</label><input type="password" name="password" placeholder="••••••••" required></div>
+      <div class="form-group"><label>Confirm Password</label><input type="password" name="confirm_password" placeholder="••••••••" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem;"><i class="ri-user-add-line"></i> Create Admin</button>
+    </form>
+
+    <div style="display:flex;justify-content:center;margin-top:1.6rem;">
+      <a href="{{ url_for('admin_products') }}" class="back-link"><i class="ri-arrow-left-line"></i> Back to Admin</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
